@@ -1,0 +1,12 @@
+# Ignore virtual environment
+.venv/
+
+# Ignore Python cache folders
+__pycache__/
+
+# Ignore system/editor files
+.DS_Store
+*.log
+
+# Ignore local test saves
+inventory_save.json
