@@ -1,0 +1,158 @@
+#
+# Test Grid 3x3 — Stateless Batch Build (.ev)
+# Three-phase pattern: Create → Describe → Connect
+#
+
+# === PHASE 1: CREATE ALL ROOMS ===
+@create Test Cell A1:evennia.objects.objects.DefaultRoom
+@create Test Cell A2:evennia.objects.objects.DefaultRoom
+@create Test Cell A3:evennia.objects.objects.DefaultRoom
+@create Test Cell B1:evennia.objects.objects.DefaultRoom
+@create Test Cell B2:evennia.objects.objects.DefaultRoom
+@create Test Cell B3:evennia.objects.objects.DefaultRoom
+@create Test Cell C1:evennia.objects.objects.DefaultRoom
+@create Test Cell C2:evennia.objects.objects.DefaultRoom
+@create Test Cell C3:evennia.objects.objects.DefaultRoom
+
+#
+
+# === PHASE 2: DESCRIBE AND SET ROOM ATTRIBUTES ===
+
+# Row A (north edge)
+@desc Test Cell A1 =
+  The northwest corner of a tidy 3×3 test grid. Chalk ticks mark the stones.
+  A draft carries the dry scent of dust and new beginnings.
+#
+@set Test Cell A1/light = soft
+@set Test Cell A1/smell = chalk dust and cool stone
+@set Test Cell A1/ambient_sound = a faint humming from somewhere east
+@set Test Cell A1/mood = methodical
+
+#
+
+@desc Test Cell A2 =
+  The northern middle cell. Footfalls sound crisp here, as if the room approves
+  of clean topology.
+#
+@set Test Cell A2/light = neutral
+@set Test Cell A2/smell = dry paper
+@set Test Cell A2/ambient_sound = steady airflow from the south
+@set Test Cell A2/mood = orderly
+
+#
+
+@desc Test Cell A3 =
+  The northeast corner of the grid. A draft toys with a stray thread of spider silk.
+#
+@set Test Cell A3/light = soft
+@set Test Cell A3/smell = limewash and cool air
+@set Test Cell A3/ambient_sound = the quietest ticking, like a distant clock
+@set Test Cell A3/mood = attentive
+
+#
+
+# Row B (center row)
+@desc Test Cell B1 =
+  The western middle cell. Scratches on the floor suggest many test runs past.
+#
+@set Test Cell B1/light = neutral
+@set Test Cell B1/smell = iron and dust
+@set Test Cell B1/ambient_sound = occasional boot scuff from the north
+@set Test Cell B1/mood = worklike
+
+#
+
+@desc Test Cell B2 =
+  The exact center of the grid. A faint draft crosses here in neat right angles.
+#
+@set Test Cell B2/light = bright
+@set Test Cell B2/smell = clean stone
+@set Test Cell B2/ambient_sound = gentle cross-breeze
+@set Test Cell B2/mood = balanced
+
+#
+
+@desc Test Cell B3 =
+  The eastern middle cell. Someone once stood here and tested exits, again and again.
+#
+@set Test Cell B3/light = neutral
+@set Test Cell B3/smell = old mortar
+@set Test Cell B3/ambient_sound = whisper of air from the north
+@set Test Cell B3/mood = expectant
+
+#
+
+# Row C (south edge)
+@desc Test Cell C1 =
+  The southwest corner. The stone underfoot is slightly warmer, as if well-traveled.
+#
+@set Test Cell C1/light = dim
+@set Test Cell C1/smell = chalk and leather
+@set Test Cell C1/ambient_sound = a muffled rustle from the east
+@set Test Cell C1/mood = grounded
+
+#
+
+@desc Test Cell C2 =
+  The southern middle cell. Echoes gather here before choosing a direction.
+#
+@set Test Cell C2/light = soft
+@set Test Cell C2/smell = cool dust
+@set Test Cell C2/ambient_sound = a soft, periodic sigh from the north
+@set Test Cell C2/mood = calm
+
+#
+
+@desc Test Cell C3 =
+  The southeast corner. The air is still; the room feels ready to be linked.
+#
+@set Test Cell C3/light = dim
+@set Test Cell C3/smell = faint lime and stone
+@set Test Cell C3/ambient_sound = a patient quiet
+@set Test Cell C3/mood = waiting
+
+#
+
+# === PHASE 3: CREATE ALL EXITS (BIDIRECTIONAL) ===
+
+# Horizontal connections (west <-> east)
+@open east;e:Test Cell A1 = Test Cell A2
+@open west;w:Test Cell A2 = Test Cell A1
+
+@open east;e:Test Cell A2 = Test Cell A3
+@open west;w:Test Cell A3 = Test Cell A2
+
+@open east;e:Test Cell B1 = Test Cell B2
+@open west;w:Test Cell B2 = Test Cell B1
+
+@open east;e:Test Cell B2 = Test Cell B3
+@open west;w:Test Cell B3 = Test Cell B2
+
+@open east;e:Test Cell C1 = Test Cell C2
+@open west;w:Test Cell C2 = Test Cell C1
+
+@open east;e:Test Cell C2 = Test Cell C3
+@open west;w:Test Cell C3 = Test Cell C2
+
+#
+
+# Vertical connections (north <-> south)
+@open south;s:Test Cell A1 = Test Cell B1
+@open north;n:Test Cell B1 = Test Cell A1
+
+@open south;s:Test Cell A2 = Test Cell B2
+@open north;n:Test Cell B2 = Test Cell A2
+
+@open south;s:Test Cell A3 = Test Cell B3
+@open north;n:Test Cell B3 = Test Cell A3
+
+@open south;s:Test Cell B1 = Test Cell C1
+@open north;n:Test Cell C1 = Test Cell B1
+
+@open south;s:Test Cell B2 = Test Cell C2
+@open north;n:Test Cell C2 = Test Cell B2
+
+@open south;s:Test Cell B3 = Test Cell C3
+@open north;n:Test Cell C3 = Test Cell B3
+
+#

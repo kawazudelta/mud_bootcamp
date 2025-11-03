@@ -1,0 +1,121 @@
+#
+# Test Grid 3x3 — Stateless Batch Build (.ev)
+# Three-phase pattern: Create → Describe → Connect
+# Stateless Create and Describe. Stateful Connect. ¯\_(ツ)_/¯
+#
+
+# === PHASE 1: CREATE ALL ROOMS ===
+# All rooms given 2 character alias for later (A1, A2, A3, etc.)
+@create/drop Test Cell A1;A1 : typeclasses.rooms.Room
+#
+@create/drop Test Cell A2;A2 : typeclasses.rooms.Room
+#
+@create/drop Test Cell A3;A3: typeclasses.rooms.Room
+#
+@create/drop Test Cell B1;B1 : typeclasses.rooms.Room
+#
+@create/drop Test Cell B2;B2 : typeclasses.rooms.Room
+#
+@create/drop Test Cell B3;B3 : typeclasses.rooms.Room
+#
+@create/drop Test Cell C1;C1 : typeclasses.rooms.Room
+#
+@create/drop Test Cell C2;C2 : typeclasses.rooms.Room
+#
+@create/drop Test Cell C3;C3 : typeclasses.rooms.Room
+#
+
+# === PHASE 2: DESCRIBE AND SET ROOM ATTRIBUTES ===
+
+# Row A (north edge)
+@desc Test Cell A1 =
+  The northwest corner of a tidy 3×3 test grid. Chalk ticks mark the stones.
+  A draft carries the dry scent of dust and new beginnings.
+#
+@desc Test Cell A2 =
+  The northern middle cell. Footfalls sound crisp here, as if the room approves
+  of clean topology.
+#
+@desc Test Cell A3 =
+  The northeast corner of the grid. A draft toys with a stray thread of spider silk.
+#
+
+# Row B (center row)
+@desc Test Cell B1 =
+  The western middle cell. Scratches on the floor suggest many test runs past.
+#
+@desc Test Cell B2 =
+  The exact center of the grid. A faint draft crosses here in neat right angles.
+#
+@desc Test Cell B3 =
+  The eastern middle cell. Someone once stood here and tested exits, again and again.
+
+# Row C (south edge)
+@desc Test Cell C1 =
+  The southwest corner. The stone underfoot is slightly warmer, as if well-traveled.
+#
+
+@desc Test Cell C2 =
+  The southern middle cell. Echoes gather here before choosing a direction.
+#
+
+@desc Test Cell C3 =
+  The southeast corner. The air is still; the room feels ready to be linked.
+#
+
+# === PHASE 3: CREATE ALL EXITS (BIDIRECTIONAL) ===
+# Does not currently reset position between open commands. But it could!
+
+# Horizontal connections (west <-> east)
+@tel A1
+#
+@open east;e,west;w = A2
+#
+@tel A2
+#
+@open east;e,west;w = A3
+#
+@tel B1
+#
+@open east;e,west;w = B2
+#
+@tel B2
+#
+@open east;e,west;w = B3
+#
+@tel C1
+#
+@open east;e,west;w = C2
+#
+@tel C2
+#
+@open east;e,west;w = C3
+#
+
+# Vertical connections (north <-> south)
+@tel A1
+#
+@open south;s,north;n = B1
+#
+@tel B1
+#
+@open south;s,north;n = C1
+#
+@tel A2
+#
+@open south;s,north;n = B2
+#
+@tel B2
+#
+@open south;s,north;n = C2
+#
+@tel A3
+#
+@open south;s,north;n = B3
+#
+@tel B3
+#
+@open south;s,north;n = C3
+#
+@tel A1
+#
