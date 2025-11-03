@@ -1,5 +1,6 @@
 from commands.command import Command
 from evennia import CmdSet
+from evennia import default_cmds
 
 
 class CmdEcho(Command):
@@ -24,17 +25,43 @@ class CmdHit(Command):
     '''
     key = "hit"
 
+    def parse(self):
+        self.args = self.args.strip()
+        target, *weapon = self.args.split(" with ", 1)
+        if not weapon:
+            target, *weapon = target.split(" ", 1)
+        self.target = target.strip()
+        if weapon:
+            self.weapon = weapon[0].strip()
+        else:
+            self.weapon = ""
+
     def func(self):
-        args = self.args.strip()
-        if not args:
+        if not self.args:
             self.caller.msg("Who do you want to hit?")
             return
-        target = self.caller.search(args)
+        # get the target for the hit
+        target = self.caller.search(self.target)
         if not target:
             return
-        self.caller.msg(f"You hit {target.key} with full force!")
-        target.msg(f"You got hit by {self.caller.key} with full force!")
+        # get and handle the weapon
+        weapon = None
+        if self.weapon:
+            weapon = self.caller.search(self.weapon)
+        if weapon:
+            weaponstr = f"{weapon.key}"
+        else:
+            weaponstr = "bare fists"
 
+        self.caller.msg(f"You hit {target.key} with {weaponstr}!")
+        target.msg(f"You got hit by {self.caller.key} with {weaponstr}!")
+
+
+class MyCmdGet(default_cmds.CmdGet):
+
+    def func(self):
+        super().func()
+        self.caller.msg(str(self.caller.location.contents))
 
 class MyCmdSet(CmdSet):
 
