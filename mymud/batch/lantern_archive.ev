@@ -1,0 +1,194 @@
+# --- ZONE: The Lantern Archive (LA) ---
+# Keys are prefixed with 'la_' for global uniqueness.
+# Run with: @batchcommand path.to.lantern_archive
+
+# =========================
+# PHASE 1: CREATE & DESCRIBE (STATELESS)
+# =========================
+
+# --- CREATE ROOMS ---
+@create la_vestibule:rooms.Room
+#
+@desc la_vestibule = You stand beneath a low archway of carved limestone. The air tastes of chalk and silence. Footprints mark the floor in looping paths, as though many visitors came here to forget where they were going. A single iron lamp hangs overhead, unlit.
+#
+
+@create la_scriptorium:rooms.Room
+#
+@desc la_scriptorium = Narrow desks fill this cramped space. Each bears a stack of blank parchment, though the topmost sheet of every pile is marked with a faint red thumbprint. The walls tremble occasionally, as if echoing distant quills.
+#
+
+@create la_niche:rooms.Room
+#
+@desc la_niche = A wedge-shaped alcove ending in a small circular window. The glass is thick and greenish, making the outside world appear submerged. Beneath the window, a brass scale rests—one pan missing.
+#
+
+@create la_reliquary:rooms.Room
+#
+@desc la_reliquary = Shelves of stone hold dozens of identical boxes sealed in red wax. Each bears a tag written in the same hand: "Proof of Attendance." The air is dry, and your skin itches from the dust.
+#
+
+@create la_lampchamber:rooms.Room
+#
+@desc la_lampchamber = A circular room dominated by a stone pedestal. Atop it rests a shattered lantern whose flame guttered out long ago, leaving the walls scorched. The soot forms a faint halo pattern, perfectly round.
+#
+
+# --- CREATE STATIC LOOK OBJECTS ---
+# VESTIBULE
+@create la_obj_lamp:objects.Object
+#
+@desc la_obj_lamp = An iron lamp with a cracked glass chimney. It smells faintly of burnt wax.
+#
+@lock la_obj_lamp = get:false()
+#
+@create la_obj_archway:objects.Object
+#
+@desc la_obj_archway = Symbols are carved into the arch: circles within circles, crossed by straight lines.
+#
+@lock la_obj_archway = get:false()
+#
+
+# SCRIPTORIUM
+@create la_obj_parchment:objects.Object
+#
+@desc la_obj_parchment = The pages are blank but faintly warm to the touch.
+#
+@lock la_obj_parchment = get:false()
+#
+@create la_obj_inkpot:objects.Object
+#
+@desc la_obj_inkpot = Empty. Its rim is crusted with black salt.
+#
+@lock la_obj_inkpot = get:false()
+#
+
+# OBSERVATION NICHE
+@create la_obj_window:objects.Object
+#
+@desc la_obj_window = You see nothing beyond the green glass except your own dim reflection.
+#
+@lock la_obj_window = get:false()
+#
+@create la_obj_scale:objects.Object
+#
+@desc la_obj_scale = A ritual balance with one missing pan; it lists slightly toward you.
+#
+@lock la_obj_scale = get:false()
+#
+
+# RELIQUARY
+@create la_obj_boxes:objects.Object
+#
+@desc la_obj_boxes = They are cool and heavy. You sense something shifting inside when you listen closely.
+#
+@lock la_obj_boxes = get:false()
+#
+@create la_obj_seal:objects.Object
+#
+@desc la_obj_seal = Each wax seal bears a different fingerprint pressed into it.
+#
+@lock la_obj_seal = get:false()
+#
+
+# LAMP CHAMBER
+@create la_obj_lantern:objects.Object
+#
+@desc la_obj_lantern = The lantern's glass is spider-webbed with cracks. Inside, a single black feather has caught.
+#
+@lock la_obj_lantern = get:false()
+#
+@create la_obj_pedestal:objects.Object
+#
+@desc la_obj_pedestal = Smooth, except for a groove shaped to cradle the lamp precisely.
+#
+@lock la_obj_pedestal = get:false()
+#
+
+# --- PLACE OBJECTS INTO ROOMS ---
+@tel la_vestibule
+#
+@move la_obj_lamp = here
+#
+@move la_obj_archway = here
+#
+
+@tel la_scriptorium
+#
+@move la_obj_parchment = here
+#
+@move la_obj_inkpot = here
+#
+
+@tel la_niche
+#
+@move la_obj_window = here
+#
+@move la_obj_scale = here
+#
+
+@tel la_reliquary
+#
+@move la_obj_boxes = here
+#
+@move la_obj_seal = here
+#
+
+@tel la_lampchamber
+#
+@move la_obj_lantern = here
+#
+@move la_obj_pedestal = here
+#
+
+# =========================
+# PHASE 2: LINK (STATEFUL)
+# =========================
+
+# Layout coordinates (for reference):
+# (0,1) la_scriptorium — (1,1) la_niche
+#   |                         |
+# (0,0) la_vestibule — (1,0) la_reliquary — (2,0) la_lampchamber
+
+# VESTIBULE links
+@tel la_vestibule
+#
+@open north;n = la_scriptorium
+#
+@open east;e = la_reliquary
+#
+
+# SCRIPTORIUM back to VESTIBULE and to NICHE
+@tel la_scriptorium
+#
+@open south;s = la_vestibule
+#
+@open east;e = la_niche
+#
+
+# OBSERVATION NICHE back to SCRIPTORIUM and to RELIQUARY
+@tel la_niche
+#
+@open west;w = la_scriptorium
+#
+@open south;s = la_reliquary
+#
+
+# RELIQUARY links back to VESTIBULE and NICHE and onward to LAMP CHAMBER
+@tel la_reliquary
+#
+@open west;w = la_vestibule
+#
+@open north;n = la_niche
+#
+@open east;e = la_lampchamber
+#
+
+# LAMP CHAMBER back to RELIQUARY
+@tel la_lampchamber
+#
+@open west;w = la_reliquary
+#
+
+# --- VALIDATION HINTS ---
+# - From la_vestibule: north->south returns you; east->west returns you.
+# - All rooms are reachable in a loop.
+# - Static objects are not takeable (get:false()) and can be looked at.
