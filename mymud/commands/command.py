@@ -33,6 +33,24 @@ class Command(BaseCommand):
     pass
 
 
+class CmdQuickFind(Command):
+    '''
+    Find an item in your current location.
+    
+    Usage:
+        quickfind <query>
+    '''
+
+    key = "quickfind"
+
+    def func(self):
+        query = self.args
+        result = self.caller.search(query)
+        if not result:
+            return
+        self.caller.msg(f"Found match for {query}: {result}")
+
+
 # -------------------------------------------------------------
 #
 # The default commands inherit from

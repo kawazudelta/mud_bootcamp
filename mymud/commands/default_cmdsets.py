@@ -17,6 +17,7 @@ own cmdsets by inheriting from them or directly from `evennia.CmdSet`.
 from evennia import default_cmds
 from . import mycommands
 from commands import mycommands
+from commands.command import CmdQuickFind
 
 
 class CharacterCmdSet(default_cmds.CharacterCmdSet):
@@ -39,6 +40,7 @@ class CharacterCmdSet(default_cmds.CharacterCmdSet):
         self.add(mycommands.CmdEcho)
         self.add(mycommands.CmdHit)
         self.add(mycommands.MyCmdGet)
+        self.add(CmdQuickFind())
 
 
 class AccountCmdSet(default_cmds.AccountCmdSet):
