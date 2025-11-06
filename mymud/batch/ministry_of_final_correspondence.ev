@@ -1,0 +1,193 @@
+#
+# Zone: Ministry of Final Correspondence, Annex 7 (MFC)
+# Four-phase pattern: Create -> Describe -> Decorate -> Connect
+#
+
+# ===================================================================
+# PHASE 1: CREATE ALL ROOMS
+# ===================================================================
+# All rooms are given a display name, a unique slug (mfc_*), and a simple alias.
+#
+@create/drop The Receiving Desk;mfc_receiving_desk;desk:typeclasses.rooms.Room
+#
+@create/drop Office of Triage;mfc_triage;triage:typeclasses.rooms.Room
+#
+@create/drop Hall of Transcription;mfc_transcription;transcription:typeclasses.rooms.Room
+#
+@create/drop Pneumatic Dispatch;mfc_dispatch;dispatch:typeclasses.rooms.Room
+#
+@create/drop The Great Archive;mfc_archive;archive:typeclasses.rooms.Room
+#
+@create/drop Archivist's Respite;mfc_respite;respite:typeclasses.rooms.Room
+#
+
+# ===================================================================
+# PHASE 2: DESCRIBE ALL ROOMS
+# ===================================================================
+
+@desc The Receiving Desk = The air is thick with the scent of old paper, ozone, and something like cold tea. A single, vast counter of dark, polished wood bisects the room, its surface scarred with the faint impressions of countless forms filled out in triplicate. Dust motes, thick as insects, drift in the beams of pale light slanting from unseen windows high above. There is no sound but for a rhythmic, dry *click-clack* from a device on the counter and the impression of a thousand whispered conversations that ended moments before you arrived. The silence that remains is heavy, procedural.
+#
+@desc Office of Triage = This cramped office is a maze of filing cabinets, each drawer sealed with a lump of red wax stamped with an indecipherable sigil. The air hums with a low, resonant frequency, as if from a transformer hidden just beneath the floorboards. A single, bare bulb hangs from a frayed cord, casting harsh shadows that make the stacks of paperwork seem to lean and sway. The room smells of ink and anxiety.
+#
+@desc Hall of Transcription = A long, narrow hall lined with dozens of small, identical writing carrels. Each carrel contains a high-backed stool and a small, slanted desk, but all are empty. A profound, listening silence fills the space, broken only by the faint, rhythmic scratching of a pen on paper that seems to come from everywhere at once. The air is cool and still, carrying the scent of dried ink and beeswax.
+#
+@desc Pneumatic Dispatch = The walls of this circular room are a dizzying lattice of brass and copper pneumatic tubes that hiss and sigh with gentle pressure. Some tubes are wide enough to fit a human head, others no bigger than a finger. They converge on a central console where a complex array of levers and gauges sits untouched. The room is warmer than the others, and the air vibrates with the constant, soft rush of unseen things moving through the pipes.
+#
+@desc The Great Archive = You are standing on a narrow mezzanine overlooking an impossibly vast, circular chamber. Rows upon rows of towering shelves stretch down into the gloom, far beyond what the dim light can reveal. The air is cold and smells of dust and eternity. A soft, ambient glow emanates from the shelves themselves, as if the knowledge they contain is faintly luminescent. From the depths below, you can hear a slow, rhythmic turning, like the page of a colossal book.
+#
+@desc Archivist's Respite = This small, hidden chamber is a stark contrast to the rest of the Ministry. The air is warm and smells of brewing tea and old wool. A single, comfortable-looking armchair sits next to a small table upon which rests a porcelain teacup, still steaming. The walls are lined not with shelves, but with corkboards covered in pinned photographs, handwritten notes, and small, handmade charms. It is a space of quiet, personal ritual.
+#
+
+# ===================================================================
+# PHASE 3: PLACE AND DESCRIBE STATIC OBJECTS
+# ===================================================================
+
+# --- Objects: The Receiving Desk ---
+@tel The Receiving Desk
+#
+@create/drop A Wooden Abacus;mfc_obj_abacus;abacus:typeclasses.objects.Object
+#
+@desc A Wooden Abacus = An old, dark-wood abacus sits on the counter. Its beads are made of bone, and they move of their own accord, clicking back and forth in a complex, silent calculation that has no apparent end.
+#
+@lock A Wooden Abacus = get:false()
+#
+@create/drop A Brass Bell;mfc_obj_bell;bell:typeclasses.objects.Object
+#
+@desc A Brass Bell = A small, tarnished brass bell for summoning an attendant. It is bolted to the counter and has no clapper. It seems designed to be struck by something other than a human hand.
+#
+@lock A Brass Bell = get:false()
+#
+@create/drop Guest Registry;mfc_obj_registry;registry:typeclasses.objects.Object
+#
+@desc Guest Registry = A heavy, leather-bound ledger lies open on the counter. The pages are filled with signatures in a spidery, archaic script, but the ink appears to shift and blur if you try to focus on any single name.
+#
+@lock Guest Registry = get:false()
+#
+
+# --- Objects: Office of Triage ---
+@tel Office of Triage
+#
+@create/drop Filing Cabinets;mfc_obj_cabinets;cabinets:typeclasses.objects.Object
+#
+@desc Filing Cabinets = Towering steel cabinets painted a dull, institutional grey. Each drawer has a small, brass label holder, but the labels are all blank. The wax seals are cool to the touch.
+#
+@lock Filing Cabinets = get:false()
+#
+@create/drop A Sorting Desk;mfc_obj_sorting_desk;sorting desk:typeclasses.objects.Object
+#
+@desc A Sorting Desk = A small, battered wooden desk is shoved into one corner. Its surface is covered in a complex diagram of intersecting lines and circles, drawn in what looks like chalk. Several small, smooth river stones are placed at key intersections.
+#
+@lock A Sorting Desk = get:false()
+#
+
+# --- Objects: Hall of Transcription ---
+@tel Hall of Transcription
+#
+@create/drop Writing Carrels;mfc_obj_carrels;carrels:typeclasses.objects.Object
+#
+@desc Writing Carrels = Rows of dark wood carrels, worn smooth with use. Each one has a small, empty inkwell and a single, sharpened quill resting beside it, as if its user has only just stepped away.
+#
+@lock Writing Carrels = get:false()
+#
+@create/drop Acoustic Tiling;mfc_obj_tiling;tiling:typeclasses.objects.Object
+#
+@desc Acoustic Tiling = The ceiling is covered in old, perforated tiles meant to deaden sound. They have yellowed with age and are stained in patterns that look disconcertingly like weeping faces.
+#
+@lock Acoustic Tiling = get:false()
+#
+
+# --- Objects: Pneumatic Dispatch ---
+@tel Pneumatic Dispatch
+#
+@create/drop Central Console;mfc_obj_console;console:typeclasses.objects.Object
+#
+@desc Central Console = A brass-plated console covered in levers, pressure dials, and routing instructions. The labels are written in a language of geometric symbols. A low, steady hum emanates from its core.
+#
+@lock Central Console = get:false()
+#
+@create/drop Message Canisters;mfc_obj_canisters;canisters:typeclasses.objects.Object
+#
+@desc Message Canisters = A wire basket sits beside the console, filled with brass pneumatic message canisters. They are all sealed. If you hold one to your ear, you can hear a faint, muffled whispering from within.
+#
+@lock Message Canisters = get:false()
+#
+
+# --- Objects: The Great Archive ---
+@tel The Great Archive
+#
+@create/drop The Shelves;mfc_obj_shelves;shelves:typeclasses.objects.Object
+#
+@desc The Shelves = Endless shelves of a dark, unknown wood, filled with identical, grey-bound ledgers. There are no titles or markings on any of them. They seem to absorb the light.
+#
+@lock The Shelves = get:false()
+#
+@create/drop Librarian's Ladder;mfc_obj_ladder;ladder:typeclasses.objects.Object
+#
+@desc Librarian's Ladder = A tall, rolling ladder is hooked onto a nearby shelf. It is made of brass and its rungs are worn smooth. It seems to lead up into total darkness.
+#
+@lock Librarian's Ladder = get:false()
+#
+
+# --- Objects: Archivist's Respite ---
+@tel Archivist's Respite
+#
+@create/drop The Armchair;mfc_obj_armchair;armchair:typeclasses.objects.Object
+#
+@desc The Armchair = A worn, overstuffed armchair upholstered in a faded floral pattern. A heavy wool blanket is draped over the back. It looks profoundly inviting.
+#
+@lock The Armchair = get:false()
+#
+@create/drop The Teacup;mfc_obj_teacup;teacup:typeclasses.objects.Object
+#
+@desc The Teacup = A delicate, white porcelain teacup. A thin wisp of steam rises from the dark liquid within, yet it never seems to cool.
+#
+@lock The Teacup = get:false()
+#
+
+# ===================================================================
+# PHASE 4: CREATE ALL EXITS (BIDIRECTIONAL)
+# ===================================================================
+
+# --- From: The Receiving Desk ---
+@tel The Receiving Desk
+#
+@open east;e = Pneumatic Dispatch
+#
+@open west;w = Office of Triage
+#
+@open north;n = Hall of Transcription
+#
+@open south;s,down;d = The Great Archive
+#
+
+# --- From: Pneumatic Dispatch ---
+@tel Pneumatic Dispatch
+#
+@open west;w = The Receiving Desk
+#
+
+# --- From: Office of Triage ---
+@tel Office of Triage
+#
+@open east;e = The Receiving Desk
+#
+
+# --- From: Hall of Transcription ---
+@tel Hall of Transcription
+#
+@open south;s = The Receiving Desk
+#
+
+# --- From: The Great Archive ---
+@tel The Great Archive
+#
+@open up;u = The Receiving Desk
+#
+@open unmarked door;door,out = Archivist's Respite
+#
+
+# --- From: Archivist's Respite ---
+@tel Archivist's Respite
+#
+@open out;o = The Great Archive
+#
