@@ -24,13 +24,22 @@ class Character(ObjectParent, DefaultCharacter):
 
     """
 
-    def at_object_creation(self):
-        self.db.strength = random.randint(3, 18)
-        self.db.dexterity = random.randint(3, 18)
-        self.db.intelligence = random.randint(3, 18)
+    # def at_object_creation(self):
+    #     self.db.strength = random.randint(3, 18)
+    #     self.db.dexterity = random.randint(3, 18)
+    #     self.db.intelligence = random.randint(3, 18)
 
-    def get_stats(self):
-        """
-        Get the main stats of this character
-        """
-        return self.db.strength, self.db.dexterity, self.db.intelligence
+    # def get_stats(self):
+    #     """
+    #     Get the main stats of this character
+    #     """
+    #     return self.db.strength, self.db.dexterity, self.db.intelligence
+
+    def at_pre_move(self, destination, **kwargs):
+        '''
+        Called by self.move_to when trying to move somcwhere. If this returns False, the move is immediately cancelled.
+        '''
+        if self.db.is_sitting:
+            self.msg("You need to stand up first.")
+            return False
+        return True
