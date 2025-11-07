@@ -18,6 +18,7 @@ from evennia import default_cmds
 from . import mycommands
 from commands import mycommands
 from commands.command import CmdQuickFind
+from commands import sittables
 
 
 class CharacterCmdSet(default_cmds.CharacterCmdSet):
@@ -41,6 +42,7 @@ class CharacterCmdSet(default_cmds.CharacterCmdSet):
         self.add(mycommands.CmdHit)
         self.add(mycommands.MyCmdGet)
         self.add(CmdQuickFind())
+        self.add(sittables.CmdNoSitStand)
 
 
 class AccountCmdSet(default_cmds.AccountCmdSet):

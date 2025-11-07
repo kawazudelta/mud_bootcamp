@@ -1,8 +1,12 @@
 # Objects you can sit on
 
 from typeclasses.objects import Object
+from commands.sittables import CmdSetSit
 
 class Sittable(Object):
+
+    def at_object_creation(self):
+        self.cmdset.add_default(CmdSetSit)
 
     def do_sit(self, sitter):
         '''
