@@ -545,9 +545,15 @@ class ClassHandler:
         if not sub_key:
             return list(abilities) # Return universal + main if no sub class
 
+        # First, find the cap imposed by the main class level.
+        level_cap_from_main = main_level // 2
+        
+        # Next, get the character's actual, earned level in the subclass.
         sub_progress = self.char.db.classes[sub_key]
-        # The FFXI Rule: Subclass level is capped at half of main class level
-        effective_sub_level = main_level // 2
+        actual_sub_level = sub_progress["level"]
+        
+        # The effective level is the LOWER of these two values.
+        effective_sub_level = min(level_cap_from_main, actual_sub_level)
         
         sub_class_abilities = CLASSES[sub_key]["abilities"]
         for level_req, ability_key in sub_class_abilities.items():
