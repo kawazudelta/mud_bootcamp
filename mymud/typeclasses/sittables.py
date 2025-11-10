@@ -5,8 +5,8 @@ from commands.sittables import CmdSetSit
 
 class Sittable(Object):
 
-    def at_object_creation(self):
-        self.cmdset.add_default(CmdSetSit)
+    # def at_object_creation(self):
+    #     self.cmdset.add_default(CmdSetSit)
 
     def do_sit(self, sitter):
         '''
@@ -28,7 +28,7 @@ class Sittable(Object):
         sitter.db.is_sitting = self
         #custom message
         msg = self.db.msg_sitting_down or f"You sit {preposition} {self.key}"
-        sitter.msg(msg)
+        sitter.msg(msg) 
 
     def do_stand(self, stander):
         '''
