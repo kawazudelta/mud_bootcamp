@@ -80,7 +80,10 @@ My work should focus on using and improving these guides, with the goal of expan
 
 -   **My Role:** I will assist in writing and refining Python code for MUD content generation, leveraging my capabilities in Python programming.
 
--   **Evennia Documentation:** For Evennia-specific features and best practices in Python, I will refer to the official documentation: `https://www.evennia.com/docs/latest/Howtos/Howtos-Overview.html`.
+-   **Evennia Documentation:** For Evennia-specific features and best practices in Python, I will refer to the official documentation:
+    *   Evennia How-to Overview: `https://www.evennia.com/docs/latest/Howtos/Howtos-Overview.html`
+    *   Evennia API Summary: `https://www.evennia.com/docs/latest/Evennia-API.html`
+    *   Evennia Components Overview: `https://www.evennia.com/docs/latest/Components/Components-Overview.html`
 
 ## 6. Praise and Encouragement Protocol
 

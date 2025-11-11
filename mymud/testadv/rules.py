@@ -2,7 +2,7 @@ from random import randint
 from .enums import Ability
 
 
-class TestAdvRoleEngine:
+class TestAdvRollEngine:
 
     def roll_d100():
         """
@@ -35,13 +35,13 @@ class TestAdvRoleEngine:
             roll_result (int): The result of a d100 roll.
 
         Returns:
-            str or None: "critical_success" if the roll is 1,
-                        "critical_failure" if the roll is 100,
+            str or None: "critical_success" if the roll is 5 or lower,
+                        "critical_failure" if the roll is 96 or higher,
                         None otherwise.
         """
-        if roll_result == 1:
+        if roll_result <= 5:
             return "critical_success"
-        elif roll_result == 100:
+        elif roll_result >= 96:
             return "critical_failure"
         else:
             return None
@@ -79,8 +79,37 @@ class TestAdvRoleEngine:
             # highest of 2 d100 rolls
             return max(self.roll_d100(), self.roll_d100())
 
-    # def saving_throw(...):
-    #     # do a saving throw against a specific target number?
+    def saving_throw(self, character, tested_ability=Ability.PHYS, advantage=False, disadvantage=False):
+        '''
+        Modification of the saving throw rules, Saving throws are rolled on a d100 against a target that is 5 times the targeted attribute.
+        
+        Args:
+            character (Character): A character (assumed to have Ability bonuses stored on itself as Attributes).
+            tested_ability (Ability): A valid Ability score enum.
+            advantage (bool): if character has advantage on this roll.
+            disadvantage (bool): if character has disadvantage on this roll.
+        
+        Returns:
+            tuple: A tuple (bool, str or None), showing if the throw succeeded, and the quality is one of None or Ability.CRITICAL_FAILURE/SUCCESS
+        '''
+
+        # Get the ability's name and lowercase it
+        ability_name = tested_ability.name.lower()
+
+        # Get the actual score from the character sheet
+        ability_score = getattr(character, ability_name, 0)
+
+        # Calculate the target using the score we just pulled
+        target = ability_score * 5
+
+        # roll 1d100
+        dice_roll = self.roll_with_advantage_or_disadvantage(advantage, disadvantage)
+
+        # figure out if we had a critical success/failure
+        quality = self.is_critical(dice_roll)
+
+        # return a tuple
+        return dice_roll <= target, quality
 
     # def opposed_saving_throw(...):
     #     # do an opposed saving throw against a target's defense
