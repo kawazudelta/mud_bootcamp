@@ -111,8 +111,65 @@ class TestAdvRollEngine:
         # return a tuple
         return dice_roll <= target, quality
 
-    # def opposed_saving_throw(...):
-    #     # do an opposed saving throw against a target's defense
+    def opposed_saving_throw(self, attacker, defender, 
+                             attack_type=Ability.PHYS, defense_type=Ability.ARMOR, 
+                             advantage=False, disadvantage=False):
+        '''
+        Performs an opposed roll between an attacker and a defender.
+        
+        Args:
+            attacker (Character): the one performing the action.
+            defender (Character): The one resisting the action.
+            attack_type (Ability): Ability score used by the attacker.
+            defense_type (Ability): Ability score used by the defender.
+            advantage (bool): if attacker has advantage on this roll.
+            disadvantage (bool): if attacker has disadvantage on this roll.
+        
+        Returns:
+            tuple: A tuple of (bool, str). The bool is True if the attacker succeeds. The str is for any critical success/failure.
+        '''
+
+        # Attacker rolls
+        attacker_score = getattr(attacker, attack_type.name.lower(), 0)
+        attacker_target = attacker_score * 5
+        attacker_roll = self.roll_with_advantage_or_disadvantage(advantage, disadvantage)
+        attacker_success = attacker_roll <= attacker_target
+        attacker_quality = self.is_critical(attacker_roll)
+        
+        # Defender rolls
+        defender_score = getattr(defender, defense_type.name.lower(), 0)
+        defender_target = defender_score * 5
+        defender_roll = self.roll_with_advantage_or_disadvantage(advantage, disadvantage)
+        defender_success = defender_roll <= defender_target
+        defender_quality = self.is_critical(defender_roll)
+        
+        # Let's check for any crits first
+        if attacker_quality == "critical_success":
+            # attacker crit automatically wins ties
+            return True, "critical_success"
+        elif defender_quality == "critical_success":
+            # defender scores a critical success and the attacker didn't, they just win, no tiebreakers
+            return False, None
+        elif attacker_quality == "critical_failure":
+            # if the attacker fumbles, that's that
+            return False, "critical_failure"
+        elif defender_quality == "critical_failure":
+            # if the defender fumbles, and the attacker didn't, attacker wins
+            return True, None
+        
+        # At this point, nobody has scored a crit of any kind
+        elif attacker_success and not defender_success:
+            #attacker succeeds and defender fails, that's easy
+            return True, None
+        elif not attacker_success and defender_success:
+            # defender succeeds
+            return False, None
+        elif attacker_success and defender_success:
+            # both succeed without critting, highest roll wins
+            # attacker wins ties
+            return attacker_roll >= defender_roll, None
+        else: # this means both failed without fumbling, so lowest roll wins
+            return attacker_roll <= defender_roll, None
 
     # def roll_random_table(...):
     #     # roll on a random table (loaded elsewhere)
