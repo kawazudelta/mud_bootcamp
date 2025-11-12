@@ -1,10 +1,20 @@
-from random import randint
+from random import randint, choice
 from .enums import Ability
 
+# define the possible results of reaching 0 hp
+death_table = (
+    ("1-2", "dead"),
+    ("3", "physique"),
+    ("4", "coordination"),
+    ("5", "instinct"),
+    ("6", "reason"),
+    ("7", "willpower"),
+    ("8", "auspice"),
+)
 
 class TestAdvRollEngine:
 
-    def roll_d100():
+    def roll_d100(self):
         """
         Rolls a 1d100.
 
@@ -13,7 +23,7 @@ class TestAdvRollEngine:
         """
         return randint(1, 100)
 
-    def is_double(roll_result):
+    def is_double(self, roll_result):
         """
         Checks if a given d100 roll result is a double (11, 22, etc.).
 
@@ -27,7 +37,7 @@ class TestAdvRollEngine:
         # We also ensure the number is between 1-99 for this rule.
         return (roll_result > 0) and (roll_result < 100) and (roll_result % 11 == 0)
 
-    def is_critical(roll_result):
+    def is_critical(self, roll_result):
         """
         Checks if a d100 roll is a critical success or failure.
 
@@ -113,7 +123,8 @@ class TestAdvRollEngine:
 
     def opposed_saving_throw(self, attacker, defender, 
                              attack_type=Ability.PHYS, defense_type=Ability.ARMOR, 
-                             advantage=False, disadvantage=False):
+                             attacker_advantage=False, attacker_disadvantage=False,
+                             defender_advantage=False, defender_disadvantage=False):
         '''
         Performs an opposed roll between an attacker and a defender.
         
@@ -122,8 +133,10 @@ class TestAdvRollEngine:
             defender (Character): The one resisting the action.
             attack_type (Ability): Ability score used by the attacker.
             defense_type (Ability): Ability score used by the defender.
-            advantage (bool): if attacker has advantage on this roll.
-            disadvantage (bool): if attacker has disadvantage on this roll.
+            attacker_advantage (bool): if attacker has advantage on this roll.
+            attacker_disadvantage (bool): if attacker has disadvantage on this roll.
+            defender_advantage (bool): if defender has advantage on this roll.
+            defender_disadvantage (bool): if defender has disadvantage on this roll.
         
         Returns:
             tuple: A tuple of (bool, str). The bool is True if the attacker succeeds. The str is for any critical success/failure.
@@ -132,14 +145,14 @@ class TestAdvRollEngine:
         # Attacker rolls
         attacker_score = getattr(attacker, attack_type.name.lower(), 0)
         attacker_target = attacker_score * 5
-        attacker_roll = self.roll_with_advantage_or_disadvantage(advantage, disadvantage)
+        attacker_roll = self.roll_with_advantage_or_disadvantage(attacker_advantage, attacker_disadvantage)
         attacker_success = attacker_roll <= attacker_target
         attacker_quality = self.is_critical(attacker_roll)
         
         # Defender rolls
         defender_score = getattr(defender, defense_type.name.lower(), 0)
         defender_target = defender_score * 5
-        defender_roll = self.roll_with_advantage_or_disadvantage(advantage, disadvantage)
+        defender_roll = self.roll_with_advantage_or_disadvantage(defender_advantage, defender_disadvantage)
         defender_success = defender_roll <= defender_target
         defender_quality = self.is_critical(defender_roll)
         
@@ -170,16 +183,52 @@ class TestAdvRollEngine:
             return attacker_roll >= defender_roll, None
         else: # this means both failed without fumbling, so lowest roll wins
             return attacker_roll <= defender_roll, None
-
-    # def roll_random_table(...):
-    #     # roll on a random table (loaded elsewhere)
     
-    # def morale_check(...):
-    #     # roll a morale check for a target
+    def morale_check(self, defender):
+        # roll a morale check for a target 
+        return self.roll("2d6") <= getattr(defender, "morale", 9)
+        
+    def heal_from_rest(self, character): 
+        """ 
+        A night's rest retains 1d8 + 20% Willpower
+        maybe we'll come back to make this 2xlevel  
+        
+        """
+        willpower = getattr(character, Ability.WILL.value, 1)
+        heal_bonus = willpower * 0.2
+        character.heal(self.roll("1d8") + heal_bonus)
 
-    # def heal_from_rest(...):
-    #     #heal 1d8 when resting+eating, but not more than max HP.
+    def roll_random_table(self, dieroll, table_choices):
+        '''
+        Args:
+            dieroll (str): a die roll string, like "1d20"
+            table_choices (iterable): A list of either single elements or of tuples
+        Returns:
+            Any: A random result from the given list of choices
 
+        Raises:
+            RuntimeError: If rolling dice gives results outside the table
+        '''
+        roll_result = self.roll(dieroll)
+        
+        if isinstance(table_choices[0], (tuple, list)):
+            # if the first element is a tuple/list; treat as on the form [("1-5", "item"),...]
+            for (valrange, choice) in table_choices:
+                minval, *maxval = valrange.split("-", 1)
+                minval = abs(int(minval))
+                maxval = abs(int(maxval[0]) if maxval else minval)
+
+                if minval <= roll_result <= maxval:
+                    return choice
+
+            # for dierolls producing values outside the table...    
+            # if we got here we beansed it, team. 
+            raise RuntimeError("roll_random_table: Invalid die roll")
+        else:
+            # a simple, regular list
+            roll_result = max(1, min(len(table_choices), roll_result))
+            return table_choices[roll_result - 1]
+            
     # def roll_death(...):
     #     #roll to determine penalty when hitting 0 HP.
 
