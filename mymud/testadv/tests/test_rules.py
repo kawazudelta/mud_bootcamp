@@ -96,25 +96,35 @@ class TestAdvRollEngine(BaseEvenniaTest):
     @patch("testadv.rules.randint")
     # tests the saving_throw() method
     def test_saving_throw(self, mock_randint):
+        # Set the test roll to a value that will pass PHYS checks and fail COOR checks
         mock_randint.return_value = 50
 
+        # meet our lab rat
         character = MagicMock()
+        # ooh so strong
         character.physique = 15
+        # bit of a klutz, though
         character.coordination = 8
 
-        # Expect character to succeed phys save and fail coor save
-        # pass Phys save, no crit
+        # character should pass Phys save, no crit
+        # send it over to the tested method
         success, quality = self.roll_engine.saving_throw(character, tested_ability=enums.Ability.PHYS)
+        # charater should pass
         self.assertTrue(success)
+        # no crit success or failure
         self.assertIsNone(quality)
 
-        # fail Coor save, no crit
+        # Now character should fail a Coor save, with no crit
         success, quality = self.roll_engine.saving_throw(character, tested_ability=enums.Ability.COOR)
+        # have a nice trip
         self.assertFalse(success)
+        # see you next fall
         self.assertIsNone(quality)
 
         # test critical success
+        # we have to start clearing the randint from this point on
         mock_randint.reset_mock()
+        # set the test roll to something that should be a critical success
         mock_randint.return_value = 5
         success, quality = self.roll_engine.saving_throw(character, tested_ability=enums.Ability.PHYS)
         self.assertTrue(success)
@@ -127,29 +137,29 @@ class TestAdvRollEngine(BaseEvenniaTest):
         self.assertFalse(success)
         self.assertEqual(quality, "critical_failure")
 
-        # Boundary test
-        # Phys succeeds on 75
+        # Test boundary values next
+        # target is 75, so a tied roll should count as a success
         mock_randint.reset_mock()
         mock_randint.return_value = 75
         success, quality = self.roll_engine.saving_throw(character, tested_ability=enums.Ability.PHYS)
         self.assertTrue(success)
         self.assertIsNone(quality)
 
-        # Phys fails on 76
+        # Phys save fails on a 76
         mock_randint.reset_mock()
         mock_randint.return_value = 76
         success, quality = self.roll_engine.saving_throw(character, tested_ability=enums.Ability.PHYS)
         self.assertFalse(success)
         self.assertIsNone(quality)
 
-        # Coor succeeds on 40
+        # Coor save succeeds on a 40...
         mock_randint.reset_mock()
         mock_randint.return_value = 40
         success, quality = self.roll_engine.saving_throw(character, tested_ability=enums.Ability.COOR)
         self.assertTrue(success)
         self.assertIsNone(quality)
 
-        # Coor fails on 41
+        # ... but Coor save fails on a 41
         mock_randint.reset_mock()
         mock_randint.return_value = 41
         success, quality = self.roll_engine.saving_throw(character, tested_ability=enums.Ability.COOR)
@@ -157,15 +167,18 @@ class TestAdvRollEngine(BaseEvenniaTest):
         self.assertIsNone(quality)
 
         # Testing Saving throws with advantage/disadvantage
-        # Advantage turns failure to success
+        # Here, Advantage on the roll should turn a failure (80) into a success (20)
         mock_randint.reset_mock()
+        # use side effect to store two rolls that we can use for test
         mock_randint.side_effect = [80, 20]
+        # same call as before, but with advantage
         success, quality = self.roll_engine.saving_throw(character, tested_ability=enums.Ability.PHYS, advantage=True)
         self.assertTrue(success)
         self.assertIsNone(quality)
+        # and we called mock_randint twice
         self.assertEqual(mock_randint.call_count, 2)
 
-        # Advantage duplicates success
+        # Rolling with advantage results in duplicate success
         mock_randint.reset_mock()
         mock_randint.side_effect = [20, 30]
         success, quality = self.roll_engine.saving_throw(character, tested_ability=enums.Ability.PHYS, advantage=True)
@@ -173,7 +186,7 @@ class TestAdvRollEngine(BaseEvenniaTest):
         self.assertIsNone(quality)
         self.assertEqual(mock_randint.call_count, 2)
 
-        # Advantage turns a success into a crit!
+        # Our advantage turns a normal success into a crit!
         mock_randint.reset_mock()
         mock_randint.side_effect = [20, 3]
         success, quality = self.roll_engine.saving_throw(character, tested_ability=enums.Ability.PHYS, advantage=True)
@@ -222,6 +235,230 @@ class TestAdvRollEngine(BaseEvenniaTest):
         self.assertEqual(mock_randint.call_count, 2)
 
     def test_opposed_saving_throw(self, mock_randint):
+        # test the opposed_saving_throw() method
+        
+        # first we mock-up our attacker 
+        # target number is 60
+        attacker = MagicMock()
+        attacker.physique = 12 
+        
+        # then we mock up our defender 
+        # target number is 50
+        defender = MagicMock()
+        defender.armor = 10 
+        
+        # Attacker succeeds, defender fails
+        # Set the attacker, defender rolls
+        mock_randint.side_effect = [40, 70]
+        # call the tested method
+        success, quality = self.roll_engine.opposed_saving_throw(
+            attacker, defender,
+              attack_type=enums.Ability.PHYS,
+                defense_type=enums.Ability.ARMOR)
+        # attacker should succeed...
+        self.assertTrue(success)
+        # ...but not critically
+        self.assertIsNone(quality)
+        # and we called mock_randint twice
+        self.assertEqual(mock_randint.call_count, 2)
+
+        # Attacker fails, Defender succeeds
+        mock_randint.reset_mock()
+        mock_randint.side_effect = [80, 30]
+        success, quality = self.roll_engine.opposed_saving_throw(
+            attacker, defender,
+              attack_type=enums.Ability.PHYS,
+                defense_type=enums.Ability.ARMOR)
+        self.assertFalse(success)
+        self.assertIsNone(quality)
+        self.assertEqual(mock_randint.call_count, 2)
+
+        # Attacker and Defender both succeed, attacker wins tiebreaker
+        mock_randint.reset_mock()
+        # higher roll wins matched successes
+        mock_randint.side_effect = [40, 30]
+        success, quality = self.roll_engine.opposed_saving_throw(
+            attacker, defender,
+              attack_type=enums.Ability.PHYS,
+                defense_type=enums.Ability.ARMOR)
+        self.assertTrue(success)
+        self.assertIsNone(quality)
+        self.assertEqual(mock_randint.call_count, 2)
+
+        # both succeed, defender wins the tie
+        mock_randint.reset_mock()
+        mock_randint.side_effect = [30, 40]
+        success, quality = self.roll_engine.opposed_saving_throw(
+            attacker, defender,
+              attack_type=enums.Ability.PHYS,
+                defense_type=enums.Ability.ARMOR)
+        self.assertFalse(success)
+        self.assertIsNone(quality)
+        self.assertEqual(mock_randint.call_count, 2)
+
+        # both fail, attacker wins the tiebreaker
+        mock_randint.reset_mock()
+        # on matched failures, the lower roll wins
+        mock_randint.side_effect = [70, 80]
+        success, quality = self.roll_engine.opposed_saving_throw(
+            attacker, defender,
+              attack_type=enums.Ability.PHYS,
+                defense_type=enums.Ability.ARMOR)
+        self.assertTrue(success)
+        self.assertIsNone(quality)
+        self.assertEqual(mock_randint.call_count, 2)
+
+        # both fail, defender wins tiebreaker
+        mock_randint.reset_mock()
+        mock_randint.side_effect = [80, 70]
+        success, quality = self.roll_engine.opposed_saving_throw(
+            attacker, defender,
+              attack_type=enums.Ability.PHYS,
+                defense_type=enums.Ability.ARMOR)
+        self.assertFalse(success)
+        self.assertIsNone(quality)
+        self.assertEqual(mock_randint.call_count, 2)
+
+        # If the attacker crits (rolls a critical success), it takes priority over any other result
+        # First check attacker's crit over a defender's fumble (critical failure)
+        mock_randint.reset_mock()
+        mock_randint.side_effect = [4, 99]
+        success, quality = self.roll_engine.opposed_saving_throw(
+            attacker, defender,
+              attack_type=enums.Ability.PHYS,
+                defense_type=enums.Ability.ARMOR)
+        self.assertTrue(success)
+        self.assertEqual(quality="critical_success")
+        self.assertEqual(mock_randint.call_count, 2)
+
+        # Attacker crits, defender fails
+        mock_randint.reset_mock()
+        mock_randint.side_effect = [4, 90]
+        success, quality = self.roll_engine.opposed_saving_throw(
+            attacker, defender,
+              attack_type=enums.Ability.PHYS,
+                defense_type=enums.Ability.ARMOR)
+        self.assertTrue(success)
+        self.assertEqual(quality="critical_success")
+        self.assertEqual(mock_randint.call_count, 2)
+
+        # Attacker crits, defender succeeds
+        mock_randint.reset_mock()
+        mock_randint.side_effect = [4, 30]
+        success, quality = self.roll_engine.opposed_saving_throw(
+            attacker, defender,
+              attack_type=enums.Ability.PHYS,
+                defense_type=enums.Ability.ARMOR)
+        self.assertTrue(success)
+        self.assertEqual(quality="critical_success")
+        self.assertEqual(mock_randint.call_count, 2)
+
+        # Attacker and defender both crit
+        mock_randint.reset_mock()
+        mock_randint.side_effect = [4, 4]
+        success, quality = self.roll_engine.opposed_saving_throw(
+            attacker, defender,
+              attack_type=enums.Ability.PHYS,
+                defense_type=enums.Ability.ARMOR)
+        self.assertTrue(success)
+        self.assertEqual(quality="critical_success")
+        self.assertEqual(mock_randint.call_count, 2)
+
+        # Now we check for cases where the attacker gets a critical failure
+        # Attacker should lose, regardless of defender's roll
+
+        # attacker fumbles, defender crits
+        mock_randint.reset_mock()
+        mock_randint.side_effect = [99, 4]
+        success, quality = self.roll_engine.opposed_saving_throw(
+            attacker, defender,
+              attack_type=enums.Ability.PHYS,
+                defense_type=enums.Ability.ARMOR)
+        self.assertFalse(success)
+        self.assertEqual(quality="critical_failure")
+        self.assertEqual(mock_randint.call_count, 2)
+
+        # attacker fumbles, defender succeeds
+        mock_randint.reset_mock()
+        mock_randint.side_effect = [99, 30]
+        success, quality = self.roll_engine.opposed_saving_throw(
+            attacker, defender,
+              attack_type=enums.Ability.PHYS,
+                defense_type=enums.Ability.ARMOR)
+        self.assertFalse(success)
+        self.assertEqual(quality="critical_failure")
+        self.assertEqual(mock_randint.call_count, 2)
+
+        # attacker fumbles, defender fails
+        mock_randint.reset_mock()
+        mock_randint.side_effect = [99, 80]
+        success, quality = self.roll_engine.opposed_saving_throw(
+            attacker, defender,
+              attack_type=enums.Ability.PHYS,
+                defense_type=enums.Ability.ARMOR)
+        self.assertFalse(success)
+        self.assertEqual(quality="critical_failure")
+        self.assertEqual(mock_randint.call_count, 2)
+
+        # attacker and defender both fumble
+        mock_randint.reset_mock()
+        mock_randint.side_effect = [99, 98]
+        success, quality = self.roll_engine.opposed_saving_throw(
+            attacker, defender,
+              attack_type=enums.Ability.PHYS,
+                defense_type=enums.Ability.ARMOR)
+        self.assertFalse(success)
+        self.assertEqual(quality="critical_failure")
+        self.assertEqual(mock_randint.call_count, 2)
+
+        # Now we give the defender a critical success, and check cases for the attacker
+        # Defender crits, attacker succeeds
+        mock_randint.reset_mock()
+        mock_randint.side_effect = [30, 4]
+        success, quality = self.roll_engine.opposed_saving_throw(
+            attacker, defender,
+              attack_type=enums.Ability.PHYS,
+                defense_type=enums.Ability.ARMOR)
+        self.assertFalse(success)
+        self.assertIsNone(quality)
+        self.assertEqual(mock_randint.call_count, 2)
+
+        #Defender crit success, attacker normal failure
+        mock_randint.reset_mock()
+        mock_randint.side_effect = [80, 4]
+        success, quality = self.roll_engine.opposed_saving_throw(
+            attacker, defender,
+              attack_type=enums.Ability.PHYS,
+                defense_type=enums.Ability.ARMOR)
+        self.assertFalse(success)
+        self.assertIsNone(quality)
+        self.assertEqual(mock_randint.call_count, 2)
+
+        # Now we check for remaining cases where the defender fumbles (critical failure)
+
+        # Defender fumbles, attacker normal success
+
+        # Defender fumbles, attacker normal failure
+
+        # Check advantage/disadvantage
+#           Category 4: Advantage/Disadvantage Integration
+
+#    * Test 11: Attacker advantage turns a loss into a win.
+#        * Setup: Call the function with attacker_advantage=True.
+#        * Rolls: side_effect will need three values: [attacker_fail_roll, attacker_succeed_roll, defender_roll]. Example: [80, 40, 70].
+#        * Logic: Attacker's advantage roll should pick 40 (a success). Defender fails with 70.
+#        * Expected Result: (True, None). Assert call_count is 3.
+
+#    * Test 12: Defender disadvantage turns a win into a loss.
+#        * Setup: Call with defender_disadvantage=True.
+#        * Rolls: side_effect needs three values: [attacker_roll, defender_succeed_roll, defender_fail_roll]. Example: [40, 30, 70].
+#        * Logic: Attacker succeeds with 40. Defender's disadvantage roll should pick 70 (a failure).
+#        * Expected Result: (True, None). Assert call_count is 3.
+
+        # Attacker advantage turns a loss into a win
+
+        # Defender disadvantage turns a win into a loss
+
 
     # def test_morale_check(self, mock_randint):    
 
