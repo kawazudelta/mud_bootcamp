@@ -113,10 +113,115 @@ class TestAdvRollEngine(BaseEvenniaTest):
         self.assertFalse(success)
         self.assertIsNone(quality)
 
+        # test critical success
+        mock_randint.reset_mock()
+        mock_randint.return_value = 5
+        success, quality = self.roll_engine.saving_throw(character, tested_ability=enums.Ability.PHYS)
+        self.assertTrue(success)
+        self.assertEqual(quality, "critical_success")
 
+        # test critical failure
+        mock_randint.reset_mock()
+        mock_randint.return_value = 96
+        success, quality = self.roll_engine.saving_throw(character, tested_ability=enums.Ability.COOR)
+        self.assertFalse(success)
+        self.assertEqual(quality, "critical_failure")
 
+        # Boundary test
+        # Phys succeeds on 75
+        mock_randint.reset_mock()
+        mock_randint.return_value = 75
+        success, quality = self.roll_engine.saving_throw(character, tested_ability=enums.Ability.PHYS)
+        self.assertTrue(success)
+        self.assertIsNone(quality)
 
-    # def test_opposed_saving_throw(self, mock_randint):
+        # Phys fails on 76
+        mock_randint.reset_mock()
+        mock_randint.return_value = 76
+        success, quality = self.roll_engine.saving_throw(character, tested_ability=enums.Ability.PHYS)
+        self.assertFalse(success)
+        self.assertIsNone(quality)
+
+        # Coor succeeds on 40
+        mock_randint.reset_mock()
+        mock_randint.return_value = 40
+        success, quality = self.roll_engine.saving_throw(character, tested_ability=enums.Ability.COOR)
+        self.assertTrue(success)
+        self.assertIsNone(quality)
+
+        # Coor fails on 41
+        mock_randint.reset_mock()
+        mock_randint.return_value = 41
+        success, quality = self.roll_engine.saving_throw(character, tested_ability=enums.Ability.COOR)
+        self.assertFalse(success)
+        self.assertIsNone(quality)
+
+        # Testing Saving throws with advantage/disadvantage
+        # Advantage turns failure to success
+        mock_randint.reset_mock()
+        mock_randint.side_effect = [80, 20]
+        success, quality = self.roll_engine.saving_throw(character, tested_ability=enums.Ability.PHYS, advantage=True)
+        self.assertTrue(success)
+        self.assertIsNone(quality)
+        self.assertEqual(mock_randint.call_count, 2)
+
+        # Advantage duplicates success
+        mock_randint.reset_mock()
+        mock_randint.side_effect = [20, 30]
+        success, quality = self.roll_engine.saving_throw(character, tested_ability=enums.Ability.PHYS, advantage=True)
+        self.assertTrue(success)
+        self.assertIsNone(quality)
+        self.assertEqual(mock_randint.call_count, 2)
+
+        # Advantage turns a success into a crit!
+        mock_randint.reset_mock()
+        mock_randint.side_effect = [20, 3]
+        success, quality = self.roll_engine.saving_throw(character, tested_ability=enums.Ability.PHYS, advantage=True)
+        self.assertTrue(success)
+        self.assertEqual(quality, "critical_success")
+        self.assertEqual(mock_randint.call_count, 2)
+
+        # Advantage turns a critical failure into a normal success
+        mock_randint.reset_mock()
+        mock_randint.side_effect = [99, 30]
+        success, quality = self.roll_engine.saving_throw(character, tested_ability=enums.Ability.PHYS, advantage=True)
+        self.assertTrue(success)
+        self.assertIsNone(quality)
+        self.assertEqual(mock_randint.call_count, 2)
+
+        # Disadvantage turns success to failure
+        mock_randint.reset_mock()
+        mock_randint.side_effect = [20, 80]
+        success, quality = self.roll_engine.saving_throw(character, tested_ability=enums.Ability.PHYS, disadvantage=True)
+        self.assertFalse(success)
+        self.assertIsNone(quality)
+        self.assertEqual(mock_randint.call_count, 2)
+
+        # Disadvantage duplicates failures
+        mock_randint.reset_mock()
+        mock_randint.side_effect = [90, 80]
+        success, quality = self.roll_engine.saving_throw(character, tested_ability=enums.Ability.PHYS, disadvantage=True)
+        self.assertFalse(success)
+        self.assertIsNone(quality)
+        self.assertEqual(mock_randint.call_count, 2)
+
+        # Disadvantage turns a normal failure into a critical failure 
+        mock_randint.reset_mock()
+        mock_randint.side_effect = [80, 99]
+        success, quality = self.roll_engine.saving_throw(character, tested_ability=enums.Ability.PHYS, disadvantage=True)
+        self.assertFalse(success)
+        self.assertEqual(quality, "critical_failure")
+        self.assertEqual(mock_randint.call_count, 2)
+
+        # Disadvantage turns a critical success into a normal failure ;_;
+        mock_randint.reset_mock()
+        mock_randint.side_effect = [3, 80]
+        success, quality = self.roll_engine.saving_throw(character, tested_ability=enums.Ability.PHYS, disadvantage=True)
+        self.assertFalse(success)
+        self.assertIsNone(quality)
+        self.assertEqual(mock_randint.call_count, 2)
+
+    def test_opposed_saving_throw(self, mock_randint):
 
     # def test_morale_check(self, mock_randint):    
 
