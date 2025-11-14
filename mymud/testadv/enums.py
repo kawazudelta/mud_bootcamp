@@ -11,12 +11,12 @@ class Ability(Enum):
     WILL = "willpower"
     AUSP = "auspice"
 
-    ARMOR = "Armor"
+    ARMOR = "armor"
 
-    CRITICAL_FAILURE = "Critical Failure"
-    CRITICAL_SUCCESS = "Critical Success"
-    FAILURE = "Failure"
-    SUCCESS = "Success"
+    CRITICAL_FAILURE = "fumble"
+    CRITICAL_SUCCESS = "crit"
+    FAILURE = "failure"
+    SUCCESS = "success"
 
     ALLEGIANCE_HOSTILE = "hostile"
     ALLEGIANCE_NEUTRAL = "neutral"
