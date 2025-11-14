@@ -49,9 +49,9 @@ class TestAdvRollEngine:
                         "critical_failure" if the roll is 96 or higher,
                         None otherwise.
         """
-        if roll_result <= 5:
+        if 1 <= roll_result <= 5:
             return "critical_success"
-        elif roll_result >= 96:
+        elif 96 <= roll_result <= 100:
             return "critical_failure"
         else:
             return None
@@ -104,7 +104,7 @@ class TestAdvRollEngine:
         '''
 
         # Get the ability's name and lowercase it
-        ability_name = tested_ability.name.lower()
+        ability_name = tested_ability.value
 
         # Get the actual score from the character sheet
         ability_score = getattr(character, ability_name, 0)
@@ -143,14 +143,14 @@ class TestAdvRollEngine:
         '''
 
         # Attacker rolls
-        attacker_score = getattr(attacker, attack_type.name.lower(), 0)
+        attacker_score = getattr(attacker, attack_type.value.lower(), 0)
         attacker_target = attacker_score * 5
         attacker_roll = self.roll_with_advantage_or_disadvantage(attacker_advantage, attacker_disadvantage)
         attacker_success = attacker_roll <= attacker_target
         attacker_quality = self.is_critical(attacker_roll)
         
         # Defender rolls
-        defender_score = getattr(defender, defense_type.name.lower(), 0)
+        defender_score = getattr(defender, defense_type.value.lower(), 0)
         defender_target = defender_score * 5
         defender_roll = self.roll_with_advantage_or_disadvantage(defender_advantage, defender_disadvantage)
         defender_success = defender_roll <= defender_target
@@ -194,7 +194,7 @@ class TestAdvRollEngine:
         A night's rest retains 1d8 + 2xlevel HP  
         
         """
-        level = getattr(character, level.value, 1)
+        level = getattr(character, "level", 1)
         heal_bonus = level * 2
         character.heal(self.roll("1d8") + heal_bonus)
 

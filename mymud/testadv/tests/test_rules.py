@@ -330,7 +330,7 @@ class TestAdvRollEngine(BaseEvenniaTest):
                 attack_type=enums.Ability.PHYS,
                     defense_type=enums.Ability.ARMOR)
         self.assertTrue(success)
-        self.assertEqual(quality="critical_success")
+        self.assertEqual(quality, "critical_success")
         self.assertEqual(mock_randint.call_count, 2)
 
         # Attacker crits, defender fails
@@ -341,7 +341,7 @@ class TestAdvRollEngine(BaseEvenniaTest):
                 attack_type=enums.Ability.PHYS,
                     defense_type=enums.Ability.ARMOR)
         self.assertTrue(success)
-        self.assertEqual(quality="critical_success")
+        self.assertEqual(quality, "critical_success")
         self.assertEqual(mock_randint.call_count, 2)
 
         # Attacker crits, defender succeeds
@@ -352,7 +352,7 @@ class TestAdvRollEngine(BaseEvenniaTest):
                 attack_type=enums.Ability.PHYS,
                     defense_type=enums.Ability.ARMOR)
         self.assertTrue(success)
-        self.assertEqual(quality="critical_success")
+        self.assertEqual(quality, "critical_success")
         self.assertEqual(mock_randint.call_count, 2)
 
         # Attacker and defender both crit
@@ -363,7 +363,7 @@ class TestAdvRollEngine(BaseEvenniaTest):
                 attack_type=enums.Ability.PHYS,
                     defense_type=enums.Ability.ARMOR)
         self.assertTrue(success)
-        self.assertEqual(quality="critical_success")
+        self.assertEqual(quality, "critical_success")
         self.assertEqual(mock_randint.call_count, 2)
 
         # Now we check for cases where the attacker gets a critical failure
@@ -377,7 +377,7 @@ class TestAdvRollEngine(BaseEvenniaTest):
                 attack_type=enums.Ability.PHYS,
                     defense_type=enums.Ability.ARMOR)
         self.assertFalse(success)
-        self.assertEqual(quality="critical_failure")
+        self.assertEqual(quality, "critical_failure")
         self.assertEqual(mock_randint.call_count, 2)
 
         # attacker fumbles, defender succeeds
@@ -388,7 +388,7 @@ class TestAdvRollEngine(BaseEvenniaTest):
                 attack_type=enums.Ability.PHYS,
                     defense_type=enums.Ability.ARMOR)
         self.assertFalse(success)
-        self.assertEqual(quality="critical_failure")
+        self.assertEqual(quality, "critical_failure")
         self.assertEqual(mock_randint.call_count, 2)
 
         # attacker fumbles, defender fails
@@ -399,7 +399,7 @@ class TestAdvRollEngine(BaseEvenniaTest):
                 attack_type=enums.Ability.PHYS,
                     defense_type=enums.Ability.ARMOR)
         self.assertFalse(success)
-        self.assertEqual(quality="critical_failure")
+        self.assertEqual(quality, "critical_failure")
         self.assertEqual(mock_randint.call_count, 2)
 
         # attacker and defender both fumble
@@ -410,7 +410,7 @@ class TestAdvRollEngine(BaseEvenniaTest):
                 attack_type=enums.Ability.PHYS,
                     defense_type=enums.Ability.ARMOR)
         self.assertFalse(success)
-        self.assertEqual(quality="critical_failure")
+        self.assertEqual(quality, "critical_failure")
         self.assertEqual(mock_randint.call_count, 2)
 
         # Now we give the defender a critical success, and check cases for the attacker
@@ -504,18 +504,18 @@ class TestAdvRollEngine(BaseEvenniaTest):
         self.assertFalse(success)
 
     @patch("testadv.rules.randint")
-    # test the healing method, on rest character regains 1d8 + 20% of willpower in HP
+    # test the healing method, on rest character regains 1d8 + 2xlevel HP
     def test_heal_from_rest(self, mock_randint):
     
         # Mock up our accident victim
         character = MagicMock()
         character.heal = MagicMock()
-        character.willpower = 10
+        character.level = 2
 
-        # roll a 5 on a 1d8. Heal amount should be 5 + (10 * 0.2) = 7
+        # roll a 5 on a 1d8. Heal amount should be 5 + (2*2) = 9
         mock_randint.return_value = 5
         self.roll_engine.heal_from_rest(character)
-        character.heal.assert_called_with(7)
+        character.heal.assert_called_with(9)
 
     @patch("testadv.rules.randint")
     # Test that the random table method returns the expected item from a table
