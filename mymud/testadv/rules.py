@@ -160,12 +160,12 @@ class TestAdvRollEngine:
         if attacker_quality == "critical_success":
             # attacker crit automatically wins ties
             return True, "critical_success"
-        elif defender_quality == "critical_success":
-            # defender scores a critical success and the attacker didn't, they just win, no tiebreakers
-            return False, None
         elif attacker_quality == "critical_failure":
             # if the attacker fumbles, that's that
             return False, "critical_failure"
+        elif defender_quality == "critical_success":
+            # defender scores a critical success and the attacker didn't, they just win, no tiebreakers
+            return False, None
         elif defender_quality == "critical_failure":
             # if the defender fumbles, and the attacker didn't, attacker wins
             return True, None
@@ -178,9 +178,10 @@ class TestAdvRollEngine:
             # defender succeeds
             return False, None
         elif attacker_success and defender_success:
-            # both succeed without critting, highest roll wins
+            # both succeed without critting, lowest roll wins
+            # This deviates from OpenQuest, but plays better with advantage/disadvantage
             # attacker wins ties
-            return attacker_roll >= defender_roll, None
+            return attacker_roll <= defender_roll, None
         else: # this means both failed without fumbling, so lowest roll wins
             return attacker_roll <= defender_roll, None
     
@@ -190,12 +191,11 @@ class TestAdvRollEngine:
         
     def heal_from_rest(self, character): 
         """ 
-        A night's rest retains 1d8 + 20% Willpower
-        maybe we'll come back to make this 2xlevel  
+        A night's rest retains 1d8 + 2xlevel HP  
         
         """
-        willpower = getattr(character, Ability.WILL.value, 1)
-        heal_bonus = willpower * 0.2
+        level = getattr(character, level.value, 1)
+        heal_bonus = level * 2
         character.heal(self.roll("1d8") + heal_bonus)
 
     def roll_random_table(self, dieroll, table_choices):
@@ -229,7 +229,30 @@ class TestAdvRollEngine:
             roll_result = max(1, min(len(table_choices), roll_result))
             return table_choices[roll_result - 1]
             
-    # def roll_death(...):
-    #     #roll to determine penalty when hitting 0 HP.
+    def roll_death(self, character):
+        #roll to determine penalty when hitting 0 HP.
+        ability_name = self.roll_random_table("1d8", death_table)
+        
+        if ability_name == "dead":
+            # TODO kill the character
+            pass
+        else:
+            loss = self.roll("1d4")
 
+            current_ability = getattr(character, ability_name)
+            current_ability -= loss
+
+            if current_ability <= 0:
+                # TODO kill the character
+                pass
+            else:
+                # refresh 1d4 health but suffer 1d4 ability loss
+                character.heal(self.roll("1d4"))
+                setattr(character, ability_name, current_ability)
+
+                character.msg(
+                    "You survive your brush with death, and while you recover "
+                    f"some health, you permanently lose {loss} {ability_name} instead."
+                )
+       
 dice = TestAdvRollEngine()
