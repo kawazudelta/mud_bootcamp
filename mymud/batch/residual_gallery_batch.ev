@@ -1,0 +1,179 @@
+# Evennia Batch-Build File for the Residual Gallery Zone
+#
+# This file was generated based on the design document:
+# batch/residual_gallery_design.md
+#
+# It follows the Four-Phase Build Pattern as specified in:
+# batch/Evennia_Batch_Build_Guide_v5.md
+#
+
+# --- PHASE 1: CREATE ROOMS ---
+# Create all room objects for the zone without describing or linking them.
+#
+@create/drop Resonant Landing;rg_landing:typeclasses.rooms.Room
+#
+@create/drop Rustlight Corridor;rg_corridor:typeclasses.rooms.Room
+#
+@create/drop Hanging Coil Gallery;rg_gallery:typeclasses.rooms.Room
+#
+@create/drop Snowwell Atrium;rg_atrium:typeclasses.rooms.Room
+#
+@create/drop Detuned Shrine;rg_shrine:typeclasses.rooms.Room
+#
+
+# --- PHASE 2: DESCRIBE ROOMS ---
+# Set the descriptions for all previously created rooms.
+#
+@desc Resonant Landing = A narrow ledge of pale stone juts out over a shallow drop, supported by ribs of grown bone-white material—half architecture, half calcified spell. The floor is paved with mismatched metal plates etched in different sigil traditions, each responding faintly when stepped on. A soft, constant thrum rises from the unseen depths below, like the ghost of chanting. A painted line of colored glyph-blocks runs along the eastern wall: rising and falling in sequence, a visual mnemonic for tonal memory rather than sound.
+#
+@desc Rustlight Corridor = The corridor is long but not quite long enough. Its walls and ceiling glow with rustlight, a warm amber luminescence produced when mineral veins are exposed to moisture and residual magic. Pierced clay diffusers overhead scatter the glow into faint patterns, and every few breaths the hallway pulses subtly, as if reacting to someone’s heartbeat. Rust blooms outward in concentric rings around old anchor points, forming accidental murals with a botanical look.
+#
+@desc Hanging Coil Gallery = The ceiling dips into a grove of suspended resonant coils—broad rings of hammered bronze wound with whisper-sinew, a creature-product that reacts to emotions rather than temperature. Each coil hangs on braided cords and sways in imperceptible arcs. Voices echo strangely here, filtered through sympathetic spell-binding. Recessed alcoves along the walls contain ritual consoles: panels of levers, tuning rods, socketed crystals, and formula-etched plates once used to calibrate the coils. Incense ash marks recent activity.
+#
+@desc Snowwell Atrium = The atrium drops a few steps down into a three-tiered basin. Above it, the ceiling simply ceases in a perfect rectangular void—a skyless skylight exposing a pale, unmoving sky. From that aperture descends memory snow, falling in slow, dreamlike flakes that glow faintly blue. The lowest terrace collects the snow. Ambient harmonic pressure gathers here, a lingering resonance built up from centuries of overlapping magical practices.
+#
+@desc Detuned Shrine = A tight, rectangular shrine chamber paneled with alternating squares of sound-drinking moss and engraved metal sigil plates. Together they create an uneven, unstable acoustic profile—part silence, part sharpened echo. A central plinth formed from stacked hollow stone drums stands in the middle, its carved spiral grooves redirecting the room’s vibrations. Floating at eye level is a drifting ring of softly glowing spell-glyphs, rearranging themselves as if attempting to form meaning from the shrine’s resonance.
+#
+
+# --- PHASE 3: DECORATE ROOMS ---
+# Teleport into each room to create and describe its static objects.
+#
+# Decorate Resonant Landing (Room 1)
+@tel Resonant Landing
+#
+@create/drop Sigiled Plate;rg_plate:typeclasses.objects.Object
+#
+@desc Sigiled Plate = A patchwork of salvaged metals etched with runes, each plate vibrating differently underfoot.
+#
+@lock Sigiled Plate = get:false()
+#
+@create/drop Glyph-Wave Frieze;rg_frieze:typeclasses.objects.Object
+#
+@desc Glyph-Wave Frieze = A painted band of small rectangular sigils—orange, red, grey—arranged like a wave or breath-pattern, used by some unknown culture to record tonal sequences.
+#
+@lock Glyph-Wave Frieze = get:false()
+#
+# Decorate Rustlight Corridor (Room 2)
+@tel Rustlight Corridor
+#
+@create/drop Clay Diffuser;rg_diffuser:typeclasses.objects.Object
+#
+@desc Clay Diffuser = Hand-punched clay screens that soften and distribute the rustlight into patterned haze.
+#
+@lock Clay Diffuser = get:false()
+#
+@create/drop Rust Halo;rg_halo:typeclasses.objects.Object
+#
+@desc Rust Halo = Magically grown rust rings radiating from old ritual hooks or anchor bolts, forming fractal halos and branching tendrils.
+#
+@lock Rust Halo = get:false()
+#
+# Decorate Hanging Coil Gallery (Room 3)
+@tel Hanging Coil Gallery
+#
+@create/drop Resonant Coil;rg_coil:typeclasses.objects.Object
+#
+@desc Resonant Coil = Warm, humming rings that chime softly when touched, resonating in the bones rather than the air.
+#
+@lock Resonant Coil = get:false()
+#
+@create/drop Ritual Console;rg_console:typeclasses.objects.Object
+#
+@desc Ritual Console = Archaic tuning stations with levers, sigil-dials, crystal rods, and spirit sockets for acoustical calibration.
+#
+@lock Ritual Console = get:false()
+#
+@create/drop Whisper-Sinew Cord;rg_cord:typeclasses.objects.Object
+#
+@desc Whisper-Sinew Cord = Braided organic cords that shiver slightly in response to emotional presence.
+#
+@lock Whisper-Sinew Cord = get:false()
+#
+# Decorate Snowwell Atrium (Room 4)
+@tel Snowwell Atrium
+#
+@create/drop Memory Snow;rg_snow:typeclasses.objects.Object
+#
+@desc Memory Snow = Slow-falling, faintly luminous flakes that hold the impression of anything they touch for a few seconds before relaxing back into formlessness.
+#
+@lock Memory Snow = get:false()
+#
+@create/drop Impossible Skylight;rg_skylight:typeclasses.objects.Object
+#
+@desc Impossible Skylight = A neatly cut hole in space, not architecture, showing a sky that does not correspond to Tess.
+#
+@lock Impossible Skylight = get:false()
+#
+@create/drop Ritual Floor;rg_ritual_floor:typeclasses.objects.Object
+#
+@desc Ritual Floor = Three shallow steps engineered for resonance, amplifying particular emotional or magical states.
+#
+@lock Ritual Floor = get:false()
+#
+# Decorate Detuned Shrine (Room 5)
+@tel Detuned Shrine
+#
+@create/drop Acoustic Moss Panel;rg_moss:typeclasses.objects.Object
+#
+@desc Acoustic Moss Panel = Soft, velvety patches that absorb sound completely.
+#
+@lock Acoustic Moss Panel = get:false()
+#
+@create/drop Engraved Sigil Plate;rg_engraved_plate:typeclasses.objects.Object
+#
+@desc Engraved Sigil Plate = Panels of metal carved with interwoven magical, ritualistic, scholastic, and mnemonic symbols.
+#
+@lock Engraved Sigil Plate = get:false()
+#
+@create/drop Stone-Drum Plinth;rg_plinth:typeclasses.objects.Object
+#
+@desc Stone-Drum Plinth = Stacked hollow drums carved with spiral grooves; touching them causes gentle, sympathetic vibrations.
+#
+@lock Stone-Drum Plinth = get:false()
+#
+@create/drop Spell-Glyph;rg_glyph:typeclasses.objects.Object
+#
+@desc Spell-Glyph = A ring of glyphs circling the room, pulsing in response to movement and emotional presence.
+#
+@lock Spell-Glyph = get:false()
+#
+
+# --- PHASE 4: LINK ROOMS ---
+# Teleport into each room to create two-way exits.
+#
+# Link Resonant Landing <-> Rustlight Corridor
+@tel Resonant Landing
+#
+@open north;n = Rustlight Corridor
+#
+@tel Rustlight Corridor
+#
+@open south;s = Resonant Landing
+#
+# Link Resonant Landing <-> Snowwell Atrium
+@tel Resonant Landing
+#
+@open east;e = Snowwell Atrium
+#
+@tel Snowwell Atrium
+#
+@open west;w = Resonant Landing
+#
+# Link Rustlight Corridor <-> Hanging Coil Gallery
+@tel Rustlight Corridor
+#
+@open east;e = Hanging Coil Gallery
+#
+@tel Hanging Coil Gallery
+#
+@open west;w = Rustlight Corridor
+#
+# Link Snowwell Atrium <-> Detuned Shrine
+@tel Snowwell Atrium
+#
+@open east;e = Detuned Shrine
+#
+@tel Detuned Shrine
+#
+@open west;w = Snowwell Atrium
+#
