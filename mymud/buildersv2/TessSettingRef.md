@@ -282,6 +282,44 @@ Builders should feel free to:
 
 ---
 
+## 11.1 Technology in Tess
+
+Tess is fundamentally a **fantasy city**, not a technologically advanced one.  
+While strange machines, constructs, automata, and magical devices are common, **technology recognizable as modern—such as electrical lighting, engines, firearms, or motor vehicles—generally does not exist.**
+
+The technological landscape is shaped by three principles:
+
+### Abundance of Magic
+Magic is reliable, omnipresent, and diverse.  
+It replaces or renders unnecessary many technologies that would otherwise appear. A problem requiring engineering elsewhere might be handled here by:
+- a minor spirit bound to a lamp,  
+- a runic circuit grown into stone,  
+- a creature whose biology fills a mechanical role,  
+- a curse repurposed as infrastructure.
+
+### Ingenuity Without Industrialization
+Tess’s residents are **inventive**, but their inventions skew toward:
+- arcane machinery  
+- ritual mechanisms  
+- enchanted tools  
+- bio-magical hybrids  
+- non-replicable curiosities  
+
+Large-scale industrial manufacture is rare; unique magical artifacts are common.
+
+### Aesthetic Tone
+Technological artifacts in Tess should feel:
+- fantastical, alchemical, arcane, ritualistic  
+- handmade or idiosyncratic  
+- inconsistent between cultures  
+- rarely mass-produced  
+- never “modern” in appearance or function  
+
+A magical street-lantern is acceptable; a fluorescent bulb is not.  
+A golem-carriage may exist; a combustion engine should not.
+
+---
+
 ## 12. NPCs, Creatures, and Peoples of Tess
 
 NPCs may come from:
@@ -354,7 +392,3 @@ Your job as a Builder is to:
 
 Tess supports infinite styles.  
 Your zone should feel like one unmistakable piece of a city too big to ever fully know.
-
----
-
-End of Tess Setting Reference Document v1.0

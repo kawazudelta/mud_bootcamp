@@ -46,7 +46,9 @@ When creating an object (rooms, props, NPCs, exits), **the first name before any
 This is what players see in the game interface.  
 Subsequent names, separated by semicolons, should be **aliases** for use by Builders and scripts. These can include zone slugs, shorthand labels, or internal references.
 
-Use natural English phrases for the display name (e.g., “The Vault”, “A Rusty Sword”), and use lowercase, underscore-based identifiers for aliases (e.g., `la_vault`, `sword`, `z1_r_0_0`).
+- **Rooms & Exits:** Use natural English phrases for the display name (e.g., “The Vault”, "North").
+- **In-Room Objects (Props):** The display name must be a singular noun phrase **without an article** (e.g., "Metal Crate", "Rusty Sword"). The game automatically adds "a" or "an", so players will see "a Metal Crate". Using "A Metal Crate" would incorrectly display as "a A Metal Crate". Do not use plurals.
+- **Aliases:** Use lowercase, underscore-based identifiers (e.g., `la_vault`, `sword`, `z1_r_0_0`).
 
 **Format:**  
 ```
@@ -57,17 +59,7 @@ Use natural English phrases for the display name (e.g., “The Vault”, “A Ru
 ```
 @create/drop The West Wing;z0_r_0_0;west:rooms.Room
 #
-@create/drop A Metal Crate;crate_a;la_crate:objects.Object
-#
-
-
-- First name = display name (player-facing), in natural language
-- Following names = aliases (for builder use, or command convenience)
-- Format: `@create/drop Display Name;alias1;alias2:typeclass`
-
-**Example:**
-```
-@create/drop The West Wing;z0_r_0_0;west:rooms.Room
+@create/drop Metal Crate;crate_a;la_crate:objects.Object
 #
 ```
 
@@ -152,18 +144,18 @@ Avoid: `@dig`, `@tunnel` — use explicit stateless creation and linking.
 ```
 @tel The Generator Room
 #
-@create/drop A Console Panel;console_panel;panel:objects.Object
+@create/drop Console Panel;console_panel;panel:objects.Object
 #
-@desc A Console Panel = A flickering console with blinking lights.
+@desc Console Panel = A flickering console with blinking lights.
 #
-@lock A Console Panel = get:false()
+@lock Console Panel = get:false()
 #
 ```
 
 ### Move to Target Room
 
 ```
-@move A Console Panel = The Generator Room
+@move Console Panel = The Generator Room
 #
 ```
 
@@ -173,7 +165,7 @@ Avoid: `@dig`, `@tunnel` — use explicit stateless creation and linking.
 
 - Prevent interaction or access
 ```
-@lock A Lamp = get:false()
+@lock Lamp = get:false()
 #
 @lock A Door = traverse:perm(Builder)
 #
@@ -220,11 +212,11 @@ Avoid: `@dig`, `@tunnel` — use explicit stateless creation and linking.
 #
 @tel The South Hall
 #
-@create/drop A Lamp;lamp1;la_lamp:objects.Object
+@create/drop Lamp;lamp1;la_lamp:objects.Object
 #
-@desc A Lamp = A sturdy oil lamp.
+@desc Lamp = A sturdy oil lamp.
 #
-@lock A Lamp = get:false()
+@lock Lamp = get:false()
 #
 ```
 
@@ -238,10 +230,10 @@ Avoid: `@dig`, `@tunnel` — use explicit stateless creation and linking.
 | `@desc`      | `@desc The Vault = A sealed chamber.`               | Set description                     |
 | `@open`      | `@open north;n = The North Room`                    | Create exit                         |
 | `@tel`       | `@tel The Vault`                                    | Teleport                            |
-| `@lock`      | `@lock A Lamp = get:false()`                        | Prevent pickup                      |
-| `@alias`     | `@alias A Lamp = torch;lantern`                     | Add aliases                         |
-| `@set`       | `@set A Box/detail = lid:A rusty lid`               | Add detail                          |
-| `@move`      | `@move A Box = The Vault`                           | Move object                         |
+| `@lock`      | `@lock Lamp = get:false()`                          | Prevent pickup                      |
+| `@alias`     | `@alias Lamp = torch;lantern`                       | Add aliases                         |
+| `@set`       | `@set Box/detail = lid:A rusty lid`                 | Add detail                          |
+| `@move`      | `@move Box = The Vault`                             | Move object                         |
 
 ---
 
@@ -294,9 +286,9 @@ Creates an item a player can "light" to illuminate a dark room. Burns out after 
 ```
 @tel The Vault
 #
-@create/drop A Wooden Splinter;splinter:evennia.contrib.tutorials.tutorial_world.objects.LightSource
+@create/drop Wooden Splinter;splinter:evennia.contrib.tutorials.tutorial_world.objects.LightSource
 #
-@desc A Wooden Splinter = A long dry shard of wood. Could be lit as a torch.
+@desc Wooden Splinter = A long dry shard of wood. Could be lit as a torch.
 #
 ```
 
@@ -306,9 +298,9 @@ Use this to simulate vertical movement. A player can `climb` the object to trigg
 ```
 @tel The Cell
 #
-@create/drop A Wine Rack;wine_rack:evennia.contrib.tutorials.tutorial_world.objects.TutorialClimbable
+@create/drop Wine Rack;wine_rack:evennia.contrib.tutorials.tutorial_world.objects.TutorialClimbable
 #
-@desc A Wine Rack = A tall wooden rack that could be climbed.
+@desc Wine Rack = A tall wooden rack that could be climbed.
 #
 ```
 
@@ -400,13 +392,13 @@ mobon Ghost Guardian
 Enables use of `slash`, `stab`, and `defend` in combat. Configure weapon stats with `@set`.
 
 ```
-@create/drop A Rusty Sword;rusty_sword:evennia.contrib.tutorials.tutorial_world.objects.TutorialWeapon
+@create/drop Rusty Sword;rusty_sword:evennia.contrib.tutorials.tutorial_world.objects.TutorialWeapon
 #
-@desc A Rusty Sword = A pitted blade, barely functional.
+@desc Rusty Sword = A pitted blade, barely functional.
 #
-@set A Rusty Sword/hit = 0.5
-@set A Rusty Sword/damage = 3
-@set A Rusty Sword/parry = 0.2
+@set Rusty Sword/hit = 0.5
+@set Rusty Sword/damage = 3
+@set Rusty Sword/parry = 0.2
 #
 ```
 

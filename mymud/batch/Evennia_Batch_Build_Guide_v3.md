@@ -59,7 +59,7 @@ After that, add **aliases** separated by `;` for builder handles and natural sho
 
 ### Style Guide
 - **Rooms:** Title Case, often with a definite article (e.g., “**The Vestibule**”).  
-- **Objects:** Natural English noun phrase (e.g., “**A Lamp**”, “**An Old Ledger**”).  
+- **Objects:** A singular noun phrase without an article (e.g., "**Lamp**", "**Old Ledger**"). The game automatically adds `a` or `an` before the name. For example, a `Lamp` object will appear to players as `a Lamp`. Do not use plurals (like `Shelves`) or include articles (`A Lamp`).
 - **Aliases:** 
   - a **slug** for builders (e.g., `la_vestibule`, `la_obj_lamp`)  
   - an intuitive shorthand (e.g., `vestibule`, `lamp`)  
@@ -72,9 +72,9 @@ After that, add **aliases** separated by `;` for builder handles and natural sho
 #
 @desc The Vestibule = Light spills across etched brass tiles.
 #
-@create/drop A Lamp;la_obj_lamp;lamp:objects.Object
+@create/drop Lamp;la_obj_lamp;lamp:objects.Object
 #
-@desc A Lamp = A heavy glass hood protects a steady flame.
+@desc Lamp = A heavy glass hood protects a steady flame.
 #
 ```
 
@@ -169,11 +169,11 @@ Teleport (`@tel`) into each room one by one. Inside each room, use `@open` to cr
 # --- PHASE 3: DECORATE ROOMS ---
 @tel The Central Junction
 #
-@create/drop A Lamp;la_obj_lamp;lamp:objects.Object
+@create/drop Lamp;la_obj_lamp;lamp:objects.Object
 #
-@desc A Lamp = A heavy glass hood protects a steady flame.
+@desc Lamp = A heavy glass hood protects a steady flame.
 #
-@lock A Lamp = get:false()
+@lock Lamp = get:false()
 #
 ```
 
