@@ -5,8 +5,8 @@ from parameterized import parameterized
 
 from evennia.utils.test_resources import BaseEvenniaTest
 
-from .. import enums, rules
-#from .. import characters, equipment, random_tables
+from .. import enums, rules, characters
+#from .. import equipment, random_tables
 #from .mixins import EvAdventureMixin
 
 class TestAdvRollEngine(BaseEvenniaTest):
@@ -542,21 +542,28 @@ class TestAdvRollEngine(BaseEvenniaTest):
 
         # Today's lucky victim
         character = MagicMock()
+        # Big papa pump
         character.physique = 15
+        # unlucky bastard though
+        character.auspice = 3
         character.heal = MagicMock()
 
-        # TODO find out how killing the character works so we can test it properly
-        # we already tested the return string above, so disable this one for now
-        # we got it from the docs, though
-        ''' 
+        # force a roll of 1 on the death table and make sure it calls at_death() method to kill the pc
         mock_randint.return_value = 1
         self.roll_engine.roll_death(character)
         character.at_death.assert_called()
+        
+        # Test death from ability loss
         mock_randint.reset_mock()
-        '''
+        # force a roll of 8 for auspice on the death table, then a roll of 4 lost points, which should drag auspice to -1
+        mock_randint.side_effect = [8, 4]
+        self.roll_engine.roll_death(character)
+        character.at_death.assert_called()
+        self.assertEqual(mock_randint.call_count, 2)
 
         # Test loss of Physique on death. 
         # side_effects: 1d8 roll for ability (3=physique), 1d4 for loss (2), 1d4 for heal (3)
+        mock_randint.reset_mock()
         mock_randint.side_effect = [3, 2, 3]
         self.roll_engine.roll_death(character)
         # make sure we lost 2 Phys

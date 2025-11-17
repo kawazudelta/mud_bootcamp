@@ -234,8 +234,8 @@ class TestAdvRollEngine:
         ability_name = self.roll_random_table("1d8", death_table)
         
         if ability_name == "dead":
-            # TODO kill the character
-            pass
+            # kill the character
+            character.at_death()
         else:
             loss = self.roll("1d4")
 
@@ -243,8 +243,8 @@ class TestAdvRollEngine:
             current_ability -= loss
 
             if current_ability <= 0:
-                # TODO kill the character
-                pass
+                # kill the character
+                character.at_death()
             else:
                 # refresh 1d4 health but suffer 1d4 ability loss
                 character.heal(self.roll("1d4"))
