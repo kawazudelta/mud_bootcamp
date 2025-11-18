@@ -236,6 +236,7 @@ class TestAdvRollEngine(BaseEvenniaTest):
 
     @patch("testadv.rules.randint")
     # tests the opposed_saving_throw() method
+    # TODO add test for the txt return on this method
     def test_opposed_saving_throw(self, mock_randint):
         # test the opposed_saving_throw() method
         

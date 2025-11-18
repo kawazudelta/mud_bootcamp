@@ -139,7 +139,10 @@ class TestAdvRollEngine:
             defender_disadvantage (bool): if defender has disadvantage on this roll.
         
         Returns:
-            tuple: A tuple of (bool, str). The bool is True if the attacker succeeds. The str is for any critical success/failure.
+            tuple: A tuple of (bool, str, str). 
+            The bool is True if the attacker succeeds. 
+            The first str is for any critical success/failure. 
+            The second str is a descriptive string for the player
         '''
 
         # Attacker rolls
@@ -155,6 +158,9 @@ class TestAdvRollEngine:
         defender_roll = self.roll_with_advantage_or_disadvantage(defender_advantage, defender_disadvantage)
         defender_success = defender_roll <= defender_target
         defender_quality = self.is_critical(defender_roll)
+
+        # Return a descriptive string
+        txt = f"Roll vs {defense_type.value}({defender_target}):\n{txt}"
         
         # Let's check for any crits first
         if attacker_quality == "critical_success":

@@ -31,3 +31,24 @@ ABILITY_REVERSE_MAP =  {
     "will": Ability.WILL,
     "ausp": Ability.AUSP,
 }
+
+class WieldLocation(Enum):
+
+    BACKPACK = "backpack"
+    WEAPON_HAND = "weapon_hand"
+    SHIELD_HAND = "shield_hand"
+    TWO_HANDS = "two_handed_weapons"
+    BODY = "body"   # for armor
+    HEAD = "head"   # for helmets
+    
+class ObjType(Enum):
+    WEAPON = "weapon"
+    ARMOR = "armor"
+    SHIELD = "shield"
+    HELMET = "helmet"
+    CONSUMABLE = "consumable"
+    GEAR = "gear"
+    MAGIC = "magic"
+    QUEST = "quest"
+    TREASURE = "treasure"
+

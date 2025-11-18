@@ -45,6 +45,7 @@ class LivingMixin:
         '''
         When paying coins, don't detract more than we have.
         ''' 
+        # TODO is that really how they want this to work?
         amount = min(amount, self.coins)
         self.coins -= amount
         return amount
