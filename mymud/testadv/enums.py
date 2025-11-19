@@ -51,4 +51,3 @@ class ObjType(Enum):
     MAGIC = "magic"
     QUEST = "quest"
     TREASURE = "treasure"
-
