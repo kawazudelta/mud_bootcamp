@@ -1,5 +1,7 @@
 from evennia import DefaultCharacter, AttributeProperty
+from evennia.utils.utils import lazy_property
 
+from .equipment import EquipmentHandler
 from .rules import dice
 
 class LivingMixin:
@@ -112,6 +114,29 @@ class TestAdvCharacter(LivingMixin, DefaultCharacter):
     xp = AttributeProperty(0)
     coins = AttributeProperty(0)
 
+    @lazy_property  # won't load the handler until someone actually tries to fetch it
+    def equipment(self):
+        return EquipmentHandler(self)
+    
+    def at_pre_object_receive(self, moved_object, source_location, **kwargs):
+        '''
+        Called by Evennia before an object arrives in the character
+        So, before the pick something up (inventory not full, etc.)
+        If it returns False, pickup is aborted.
+        '''
+        return self.equipment.validate_slot_usage(moved_object)
+
+    def at_object_receive(self, moved_object, source_location, **kwargs):
+        '''
+        Called by Evennia when an object arrives "in" the character
+        '''
+        self.equipment.add(moved_object)
+
+    def at_object_leave(self, moved_object, destination, **kwargs):
+        '''
+        Called by Evennia when an object leaves the character
+        '''
+        self.equipment.remove(moved_object)
     def at_defeat(self):
         '''
         Characters roll on the death table.
