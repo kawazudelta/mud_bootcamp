@@ -1,8 +1,10 @@
-from evennia import AttributeProperty, DefaultObject 
+from evennia import AttributeProperty, DefaultObject, search_object, create_object 
 from evennia.utils.utils import make_iter
 from .utils import get_obj_stats 
 from .enums import Ability, WieldLocation, ObjType
 from . import rules
+
+_BARE_HANDS = None
 
 class TestAdvObject(DefaultObject):
     '''
@@ -168,3 +170,101 @@ class TestAdvWeapon(TestAdvObject):
             mapping={target.key: target},   # same here
         )
         if is_hit:
+            # enemy hit, calculate damage
+            dmg = rules.dice.roll(self.damage_roll)
+
+            if quality is Ability.CRITICAL_SUCCESS:
+                # We double the damage for crits
+                dmg += rules.dice.roll(self.damage_roll)
+                message = (
+                    f" $You() |ycritically|n $conj(hit) $You({target.key}) for |r{dmg}|n damage!"
+                )
+            else:
+                message = f" $You() $conj(hit) $You({target.key}) for |r{dmg}|n damage!"
+
+            location.msg_contents(message, from_obj=attacker, mapping={target.key: target})
+            # call hook to cause damage to the target
+            target.at_damage(dmg, attacker=attacker)
+
+        else:
+            # at this point, we've missed
+            message = f" $You() $conj(miss) $You({target.key})."
+            # truly beansed it, in this case
+            if quality is Ability.CRITICAL_FAILURE:
+                message += "... it's a |rcritical miss!|n, damaging the weapon."
+                # damage the weapon
+                if self.quality is not None:
+                    self.quality -= 1
+                location.msg_contents(message, from_obj=attacker, mapping={target.key: target})
+
+    def at_post_use(self, user, *args, **kwargs):
+        # Break the weapon if quality hit zero
+        if self.quality is not None and self.quality <= 0:
+            user.msg(f"|r{self.get_display_name(user)} breaks and can no longer be used!")
+
+
+class TestAdvRuneStone(TestAdvWeapon, TestAdvConsumable):
+    '''
+    Base for all magical rune stones
+    Must be wielded in both hands to used
+    Can only be used once per rest
+    '''
+    obj_type = (ObjType.WEAPON, ObjType.MAGIC)
+    inventory_use_slot = WieldLocation.TWO_HANDS
+    quality = AttributeProperty(3, autocreate=False)
+
+    attack_type = AttributeProperty(Ability.REAS, autocreate=False)
+    defense_type = AttributeProperty(Ability.WILL, autocreate=False)
+
+    damage_roll = AttributeProperty("1d8", autocreate=False)
+
+    def at_post_use(self, user, *args, **kwargs):
+        # Called after spell is cast
+        self.uses -= 1
+
+    def refresh(self):
+        # Refresh the rune stone, normally after resting
+        self.uses = 1
+
+
+class TestAdvArmor(TestAdvObject):
+    # Armor will be the mother of helmets and shields
+    obj_type = ObjType.ARMOR
+    inventory_use_slot = WieldLocation.BODY
+
+    #lowest possible armor is 11
+    armor = AttributeProperty(11, autocreate=False)
+    quality = AttributeProperty(3, autocreate=False)
+
+
+class TestAdvShield(TestAdvArmor):
+    obj_type = ObjType.SHIELD
+    inventory_use_slot = WieldLocation.SHIELD_HAND
+
+
+class TestAdvHelmet(TestAdvArmor):
+    obj_type = ObjType.HELMET
+    inventory_use_slot = WieldLocation.HEAD
+
+
+class WeaponBareHands(TestAdvWeapon):
+    '''
+    we have weapons at home
+    '''
+    obj_type = ObjType.WEAPON
+    inventory_use_slot = WieldLocation.WEAPON_HAND
+    attack_type = Ability.PHYS
+    defense_type = Ability.ARMOR
+    damage_roll = "1d4" # No monks in Knave, I guess
+    quality = None      # We're assuming fists are indescructible, even thought it would be REALLY funny
+
+    def get_bare_hands():
+        '''
+        Get the bare hands
+        '''
+        global _BARE_HANDS
+        if not _BARE_HANDS:
+            _BARE_HANDS = search_object("Bare Hands", typeclass=WeaponBareHands).first()
+        if not _BARE_HANDS:
+            _BARE_HANDS = create_object(WeaponBareHands, key="Bare Hands")
+        return _BARE_HANDS

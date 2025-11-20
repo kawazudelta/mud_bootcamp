@@ -1,11 +1,14 @@
 from evennia.utils import create
-from evennia.utils.test_resources import EvenniaTest
+from evennia.utils.test_resources import BaseEvenniaTest
 
-from ..import utils
-class TestUtils(EvenniaTest):
+from .. import utils
+from ..objects import TestAdvObject
+
+class TestUtils(BaseEvenniaTest):
     def test_get_obj_stats(self):
         # make a simple object to test with
         obj = create.create_object(
+            TestAdvObject,
             key="testobj",
             attributes=(("desc", "A test object"),)
         )
@@ -16,13 +19,13 @@ class TestUtils(EvenniaTest):
             result,
             """
 |ctestobj|n
-Value: ~|y10|n coins[not carried]
+Value: ~|y0|n coins
 
 A test object
 
 Slots: |w1|n, Used from: |wbackpack|n
-Quality: |w3|n, Uses: |winfinite|n
-Attacks using |wstrength|n against |warmor|n
-Damage roll: |w1d6|n
+Quality: |wN/A|n, Uses: |wN/A|n
+Attacks using |wNo attack|n against |wNo defense|n
+Damage roll: |wNone|n
 """.strip()
 )
