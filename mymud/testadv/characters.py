@@ -1,7 +1,7 @@
-from evennia import DefaultCharacter, AttributeProperty
+from evennia import DefaultCharacter, AttributeProperty, logger
 from evennia.utils.utils import lazy_property
 
-from .equipment import EquipmentHandler
+from .equipment import EquipmentHandler, EquipmentError
 from .rules import dice
 
 class LivingMixin:
@@ -130,13 +130,17 @@ class TestAdvCharacter(LivingMixin, DefaultCharacter):
         '''
         Called by Evennia when an object arrives "in" the character
         '''
-        self.equipment.add(moved_object)
+        try:
+            self.equipment.add(moved_object)
+        except EquipmentError:
+            logger.logtrace()
 
     def at_object_leave(self, moved_object, destination, **kwargs):
         '''
         Called by Evennia when an object leaves the character
         '''
         self.equipment.remove(moved_object)
+
     def at_defeat(self):
         '''
         Characters roll on the death table.
