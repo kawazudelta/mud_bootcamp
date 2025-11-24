@@ -187,10 +187,10 @@ class EquipmentHandler:
                 # armor is listed using it's defense. Here we deviate again from the tutorial.
                 # We just list its bonus. need to set the base 10 armor somewhere else then.
                 # TODO figure out where the ten (eleven?) base points of armor go
-                getattr(slots[WieldLocation.BODY], "armor", 1)
+                getattr(slots[WieldLocation.BODY], "armor", 1),
                 # Shields and helmets are listed by the bonus they give to armor
-                + getattr(slots[WieldLocation.SHIELD_HAND], "armor", 1)
-                + getattr(slots[WieldLocation.HEAD], "armor", 1)
+                getattr(slots[WieldLocation.SHIELD_HAND], "armor", 1),
+                getattr(slots[WieldLocation.HEAD], "armor", 1)
             )
         )
     

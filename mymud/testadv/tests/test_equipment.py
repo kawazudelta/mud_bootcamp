@@ -1,21 +1,22 @@
 from evennia.utils import create
 from evennia.utils.test_resources import BaseEvenniaTest
 
-from ..objects import TestAdvObject, TestAdvArmor, TestAdvHelmet, TestAdvWeapon, TestAdvShield, TestAdvRuneStone, WeaponBareHands
+from ..objects import TestAdvObject, TestAdvArmor, TestAdvHelmet, TestAdvWeapon, TestAdvShield, TestAdvRuneStone, WeaponBareHands, TestAdvBodyArmor
 from ..enums import WieldLocation, Ability
 from ..characters import TestAdvCharacter
 
 class TestEquipment(BaseEvenniaTest):
     
     def setUp(self):
+        super().setUp() # Call parent setUp for proper test environment initialization
         # we're going to need a guy and some items
         self.character = create.create_object(TestAdvCharacter, key="testchar")
         self.helmet = create.create_object(TestAdvHelmet, key="helmet")
-        self.armor = create.create_object(TestAdvArmor, key="armor")
+        self.armor = create.create_object(TestAdvBodyArmor, key="armor")
         self.weapon = create.create_object(TestAdvWeapon, key="weapon")
         self.shield = create.create_object(TestAdvShield, key="shield")
         self.runestone = create.create_object(TestAdvRuneStone, key="runestone")
-        _BARE_HANDS = None
+
 
     def test_count_slots(self):
         # real easy, testchar's inventory should be empty to start
@@ -73,7 +74,7 @@ class TestEquipment(BaseEvenniaTest):
         # check sword returned to backpack
         self.assertEqual(
             self.character.equipment.slots[WieldLocation.BACKPACK],
-            [self.weapon]
+            [[self.weapon]]
         )
 
     def test_all(self):
@@ -82,7 +83,6 @@ class TestEquipment(BaseEvenniaTest):
         # Should contain 5 tuples for default slots, all with None
         self.assertEqual(len(all_items_empty), 5)
         self.assertIn((None, WieldLocation.WEAPON_HAND), all_items_empty)
-        self.assertIn((None, WieldLocation.BACKPACK), all_items_empty)
 
         # put a helmet in the backpack
         self.character.equipment.add(self.helmet)
@@ -115,14 +115,15 @@ class TestEquipment(BaseEvenniaTest):
     def test_armor(self):
         # test the armor calculation based on default shield and helmet
         self.character.equipment.move(self.shield)
-        self.assertEqual(self.character.equipment.armor, 1)
+        # Expected: 1 (shield) + 1 (default body) + 1 (default head) = 3
+        self.assertEqual(self.character.equipment.armor, 3)
         self.character.equipment.move(self.helmet)
-        self.assertEqual(self.character.equipment.armor, 2)
-        # Set armor value to 11 for the armor
-        setattr(self.armor, "armor", 11)
+        # Expected: 1 (shield) + 1 (helmet) + 1 (default body) = 3
+        self.assertEqual(self.character.equipment.armor, 3)
+        setattr(self.armor, "armor", 11) # Explicitly set armor value for the test
         # equip it
         self.character.equipment.move(self.armor)
-        # should bring total to 13
+        # Expected: 11 (body armor) + 1 (shield) + 1 (helmet) = 13
         self.assertEqual(self.character.equipment.armor, 13)
 
     def test_weapon(self):

@@ -27,7 +27,7 @@ class TestAdvObject(DefaultObject):
         '''
         # runs a loop through the list of the objects obj_type values and adds them to the object as tags
         for obj_type in make_iter(self.obj_type):
-            self.tags.add(self.obj_type.value, category="obj_type")
+            self.tags.add(obj_type.value, category="obj_type")
 
     def get_display_header(self, looker, **kwargs):
         '''
@@ -229,13 +229,18 @@ class TestAdvRuneStone(TestAdvWeapon, TestAdvConsumable):
 
 
 class TestAdvArmor(TestAdvObject):
-    # Armor will be the mother of helmets and shields
+    # Armor will be the mother of helmets and shields AND body armor
+    
+
+    #lowest possible armor is 11 (?)
+    armor = AttributeProperty(1, autocreate=False)
+    quality = AttributeProperty(3, autocreate=False)
+
+
+class TestAdvBodyArmor(TestAdvArmor):
+    # a class specifically for body armor so we can change the armor value independently
     obj_type = ObjType.ARMOR
     inventory_use_slot = WieldLocation.BODY
-
-    #lowest possible armor is 11
-    armor = AttributeProperty(11, autocreate=False)
-    quality = AttributeProperty(3, autocreate=False)
 
 
 class TestAdvShield(TestAdvArmor):
