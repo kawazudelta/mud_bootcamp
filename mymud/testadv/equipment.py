@@ -72,7 +72,7 @@ class EquipmentHandler:
     def validate_slot_usage(self, obj):
         '''
         Check if obj can fit in equipment, based on size
-        First check if they can quip it at all
+        First check if they can equip it at all
         '''
         if not inherits_from(obj, TestAdvObject):
             # in case we mis with non TestAdv objects
@@ -95,6 +95,8 @@ class EquipmentHandler:
         '''
         Remove specific object or objects from a slot.
         Returns a list of 0, 1 or more objects removed from inventory.
+
+        obj_or_slot is the argument parsed from the player command (I bet)
         '''
         slots = self.slots
         ret = []
@@ -163,19 +165,19 @@ class EquipmentHandler:
         # save the new equipment state
         self._save()
 
-        def all(self):
-            '''
-            Get all objects in inventory, regardless of location
-            '''
-            slots = self.slots
-            lst = [
-                (slots[WieldLocation.WEAPON_HAND], WieldLocation.WEAPON_HAND),
-                (slots[WieldLocation.SHIELD_HAND], WieldLocation.SHIELD_HAND),
-                (slots[WieldLocation.TWO_HANDS], WieldLocation.TWO_HANDS),
-                (slots[WieldLocation.BODY], WieldLocation.BODY),
-                (slots[WieldLocation.HEAD], WieldLocation.HEAD),    
-            ] + [(item, WieldLocation.BACKPACK) for item in slots[WieldLocation.BACKPACK]]
-            return lst
+    def all(self):
+        '''
+        Get all objects in inventory, regardless of location
+        '''
+        slots = self.slots
+        lst = [
+            (slots[WieldLocation.WEAPON_HAND], WieldLocation.WEAPON_HAND),
+            (slots[WieldLocation.SHIELD_HAND], WieldLocation.SHIELD_HAND),
+            (slots[WieldLocation.TWO_HANDS], WieldLocation.TWO_HANDS),
+            (slots[WieldLocation.BODY], WieldLocation.BODY),
+            (slots[WieldLocation.HEAD], WieldLocation.HEAD),    
+        ] + [(item, WieldLocation.BACKPACK) for item in slots[WieldLocation.BACKPACK]]
+        return lst
 
     @property    
     def armor(self):
@@ -183,8 +185,9 @@ class EquipmentHandler:
         return sum(
             (
                 # armor is listed using it's defense. Here we deviate again from the tutorial.
-                # We just list its value. I think
-                getattr(slots[WieldLocation.BODY], "armor", 11)
+                # We just list its bonus. need to set the base 10 armor somewhere else then.
+                # TODO figure out where the ten (eleven?) base points of armor go
+                getattr(slots[WieldLocation.BODY], "armor", 1)
                 # Shields and helmets are listed by the bonus they give to armor
                 + getattr(slots[WieldLocation.SHIELD_HAND], "armor", 1)
                 + getattr(slots[WieldLocation.HEAD], "armor", 1)

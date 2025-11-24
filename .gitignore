@@ -10,3 +10,5 @@ __pycache__/
 
 # Ignore local test saves
 inventory_save.json
+
+*.pem

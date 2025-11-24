@@ -76,6 +76,7 @@ class TestAdvQuestObject(TestAdvObject):
     '''
     Shouldn't normally be possible to sell or trade these.
     '''
+    # TODO stop from selling or dropping these
     obj_type = ObjType.QUEST
 
 
@@ -166,7 +167,7 @@ class TestAdvWeapon(TestAdvObject):
         )
         location.msg_contents(
             f"$You() $conj(attack) $You({target.key}) with {self.key}: {txt}",
-            from_obj=attacker,              # This is a clarification for FuncParser, to help is conjugate
+            from_obj=attacker,              # This is a clarification for FuncParser, to help it conjugate
             mapping={target.key: target},   # same here
         )
         if is_hit:
