@@ -5,8 +5,6 @@ from ..objects import TestAdvObject, TestAdvArmor, TestAdvHelmet, TestAdvWeapon,
 from ..enums import WieldLocation, Ability
 from ..characters import TestAdvCharacter
 
-import mymud.testadv.objects
-
 class TestEquipment(BaseEvenniaTest):
     
     def setUp(self):
@@ -17,7 +15,7 @@ class TestEquipment(BaseEvenniaTest):
         self.weapon = create.create_object(TestAdvWeapon, key="weapon")
         self.shield = create.create_object(TestAdvShield, key="shield")
         self.runestone = create.create_object(TestAdvRuneStone, key="runestone")
-        mymud.testadv.objects._BARE_HANDS = None
+        _BARE_HANDS = None
 
     def test_count_slots(self):
         # real easy, testchar's inventory should be empty to start

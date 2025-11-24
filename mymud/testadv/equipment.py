@@ -1,7 +1,7 @@
 from evennia.utils.utils import inherits_from
 
 from .enums import WieldLocation, Ability
-from .objects import TestAdvObject, get_bare_hands
+from .objects import TestAdvObject, WeaponBareHands
 
 class EquipmentError(TypeError):
     '''
@@ -204,6 +204,6 @@ class EquipmentHandler:
             weapon = slots[WieldLocation.WEAPON_HAND]
         # if there's still no weapon, we throw hands
         if not weapon:
-            weapon = get_bare_hands()
+            weapon = WeaponBareHands.get_bare_hands()
         return weapon
     
