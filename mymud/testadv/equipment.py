@@ -140,7 +140,7 @@ class EquipmentHandler:
         to_backpack = []
         if use_slot is WieldLocation.TWO_HANDS:
             # Two handed weapons preclude a weapon and shield hand item
-            to_backpack = [slots[WieldLocation.WEAPON_HAND]], slots[WieldLocation.SHIELD_HAND]
+            to_backpack = [slots[WieldLocation.WEAPON_HAND], slots[WieldLocation.SHIELD_HAND]]
             slots[WieldLocation.WEAPON_HAND] = None
             slots[WieldLocation.SHIELD_HAND] = None
             slots[use_slot] = obj
@@ -154,7 +154,7 @@ class EquipmentHandler:
             to_backpack = [obj]
         else:
             # for anything else (body or head) we just replace it
-            to_backback = [slots[use_slot]]
+            to_backpack = [slots[use_slot]]
             slots[use_slot] = obj
 
         for to_backpack_obj in to_backpack:
@@ -182,15 +182,14 @@ class EquipmentHandler:
     @property    
     def armor(self):
         slots = self.slots
+        body_armor = getattr(slots[WieldLocation.BODY], "armor", 0)
+        shield_armor = getattr(slots[WieldLocation.SHIELD_HAND], "armor", 0)
+        head_armor = getattr(slots[WieldLocation.HEAD], "armor", 0)
         return sum(
             (
-                # armor is listed using it's defense. Here we deviate again from the tutorial.
-                # We just list its bonus. need to set the base 10 armor somewhere else then.
-                # TODO figure out where the ten (eleven?) base points of armor go
-                getattr(slots[WieldLocation.BODY], "armor", 1),
-                # Shields and helmets are listed by the bonus they give to armor
-                getattr(slots[WieldLocation.SHIELD_HAND], "armor", 1),
-                getattr(slots[WieldLocation.HEAD], "armor", 1)
+                body_armor,
+                shield_armor,
+                head_armor
             )
         )
     

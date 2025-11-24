@@ -230,9 +230,7 @@ class TestAdvRuneStone(TestAdvWeapon, TestAdvConsumable):
 
 class TestAdvArmor(TestAdvObject):
     # Armor will be the mother of helmets and shields AND body armor
-    
-
-    #lowest possible armor is 11 (?)
+    #low unarmored characters have 11 base defense
     armor = AttributeProperty(1, autocreate=False)
     quality = AttributeProperty(3, autocreate=False)
 

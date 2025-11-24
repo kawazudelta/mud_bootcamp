@@ -11,6 +11,9 @@ class TestEquipment(BaseEvenniaTest):
         super().setUp() # Call parent setUp for proper test environment initialization
         # we're going to need a guy and some items
         self.character = create.create_object(TestAdvCharacter, key="testchar")
+        # Increase character's stats to allow more inventory slots for testing
+        setattr(self.character, Ability.PHYS.value, 10)
+        setattr(self.character, Ability.REAS.value, 10)
         self.helmet = create.create_object(TestAdvHelmet, key="helmet")
         self.armor = create.create_object(TestAdvBodyArmor, key="armor")
         self.weapon = create.create_object(TestAdvWeapon, key="weapon")
@@ -74,7 +77,7 @@ class TestEquipment(BaseEvenniaTest):
         # check sword returned to backpack
         self.assertEqual(
             self.character.equipment.slots[WieldLocation.BACKPACK],
-            [[self.weapon]]
+            [self.weapon]
         )
 
     def test_all(self):
@@ -113,18 +116,22 @@ class TestEquipment(BaseEvenniaTest):
         self.assertCountEqual(all_items_equipped, expected_list)
 
     def test_armor(self):
-        # test the armor calculation based on default shield and helmet
-        self.character.equipment.move(self.shield)
-        # Expected: 1 (shield) + 1 (default body) + 1 (default head) = 3
-        self.assertEqual(self.character.equipment.armor, 3)
-        self.character.equipment.move(self.helmet)
-        # Expected: 1 (shield) + 1 (helmet) + 1 (default body) = 3
-        self.assertEqual(self.character.equipment.armor, 3)
-        setattr(self.armor, "armor", 11) # Explicitly set armor value for the test
-        # equip it
+        # Add items to backpack first, as they would in normal gameplay
+        self.character.equipment.add(self.armor)
+        self.character.equipment.add(self.shield)
+        self.character.equipment.add(self.helmet)
+
+        # Now, move the body armor and test that it's calculating
         self.character.equipment.move(self.armor)
-        # Expected: 11 (body armor) + 1 (shield) + 1 (helmet) = 13
-        self.assertEqual(self.character.equipment.armor, 13)
+        self.assertEqual(self.character.equipment.armor, 1)
+
+        # Move the shield
+        self.character.equipment.move(self.shield)
+        self.assertEqual(self.character.equipment.armor, 2)
+
+        # Move the helmet
+        self.character.equipment.move(self.helmet)
+        self.assertEqual(self.character.equipment.armor, 3)
 
     def test_weapon(self):
         #check if character is wielding a two-hander, a one hander, or bare hands

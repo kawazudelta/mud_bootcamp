@@ -105,7 +105,7 @@ class TestAdvCharacter(LivingMixin, DefaultCharacter):
     willpower = AttributeProperty(1)
     auspice = AttributeProperty(1)
     
-    armor = AttributeProperty(1)
+    armor = AttributeProperty(11)
 
     hp = AttributeProperty(8)
     hp_max = AttributeProperty(8)
