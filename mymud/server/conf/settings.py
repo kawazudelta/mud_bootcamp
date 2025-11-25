@@ -42,3 +42,6 @@ try:
     from server.conf.secret_settings import *
 except ImportError:
     print("secret_settings.py file not found or failed to import.")
+
+# Stop server from automatically creating a character object to be puppeted by an account
+AUTO_CREATE_CHARACTER_WITH_ACCOUNT = False

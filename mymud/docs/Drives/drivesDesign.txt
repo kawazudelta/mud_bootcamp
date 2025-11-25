@@ -1,0 +1,15 @@
+Core system:
+Like equipment slots, characters have equippable slots for four Drives (Obsession, Yearning, Resentment,  Fear). Unlike equipment, these Drives are assembled behind the scenes. Character actions, starting with combat and expanding outward, contribute to progress bars for each Drive Feeling. E.g. fleeing combat or being ambushed gives Fear points. Being hit by an enemy gives Resentment points. 
+
+Meanwhile we have more progress bars to track the development of Drive Focuses. E.g. lighting a torch gives you +1 Fire point. Killing or eating a rat gives you +5 Vermin points. Eating a blood sausage gives +1 Blood point, Stabbing someone gives +10 Blood points. 
+
+Anyway, once you've filled one of the Feelings and one of the Focuses you get a new Drive, the next time you rest. E.g. Fear of Fire, Obsession with Vermin, Yearning for Blood. The progress on these bars should be a black box to a player, maybe just a line about feeling like they're ready to develop a Yearning, or they're thinking about Rats a lot lately. 
+
+While Drives get equipped like other gear, the player can’t unequip and swap them freely. When the Drive drops, it equips automatically if the slot is empty. If you've already got an Obsession, say, and a new one drops, you'll have to decide which to keep (make them type the name). You can remove them but you'll probably need a specialized person to do it. 
+
+Potential implementations:
+These Drives can provide the character with new triggers to gain experience or skill points. E.g. If you have Fear of Fire, you get xp for fleeing flaming enemies. Obsession with Fire gives you bonus xp for fighting while you carry a torch, or with a flaming weapon. 
+
+It makes sense for the drives to be a major lever for bonus HP and healing recovery, since that’s always kind of been a measure of motivation, and these are Drives. May make sense for MP/SP too.
+
+I think it’s also worth considering making certain Drives the requirement to unlock advanced classes. (Mischief Mane requires Resentment of Poison and Obsession with Rats, for example. Draconymus might require a Yearning for AND a Fear of Dragons.)
