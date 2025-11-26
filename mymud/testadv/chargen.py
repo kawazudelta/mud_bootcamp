@@ -271,15 +271,31 @@ To swap the values of PHYS and WILL, for example, write |wPHYS WILL|n. Empty to 
 
 
 def node_apply_character(caller, raw_string, **kwargs):
-    
+    '''
+    End chargen and create the character. And puppet it.
+    '''
+    tmp_character = kwargs["tmp_character"]
+    new_character = tmp_character.apply()
 
+    caller.account.add_character(new_character)
+
+    text = "Character created!"
+
+    # returning None instead of options means we exit the menu
+    return text, None
 
 
 def start_chargen(caller, session=None):
     '''
     This is a start point for spinning up the chargen from a command later
     '''
-    menutree = {}   # TODO menutree, I guess
+    # menutree contains all the nodes in the chargen menu tree
+    menutree = {
+        "node_chargen": node_chargen,
+        "node_name_change": node_name_change,
+        "node_swap_abilities": node_swap_abilities,
+        "node_accept_chargen": node_apply_character,
+    } 
 
     # this generates all random components of the character
     tmp_character = TemporaryCharacterSheet()
