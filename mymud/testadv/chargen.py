@@ -1,5 +1,34 @@
+from .characters import TestAdvCharacter
 from .random_tables import chargen_tables
 from .rules import dice
+
+from evennia import create_object, EvMenu
+from evennia.prototypes.spawner import spawn
+
+_ABILITIES = {
+    "PHYS": "physique",
+    "COOR": "coordination",
+    "INST": "instinct",
+    "REAS": "reason",
+    "WILL": "willpower",
+    "AUSP": "auspice",
+}
+
+_TEMP_SHEET = """
+{name}
+
+PHYS: {physique}
+COOR: {coordination}
+INST: {instinct}
+REAS: {reason}
+WILL: {willpower}
+AUSP: {auspice}
+
+{description}
+
+Your belongings:
+{equipment}
+"""
 
 class TemporaryCharacterSheet:
 
@@ -64,3 +93,201 @@ class TemporaryCharacterSheet:
             dice.roll_random_table("1d20", chargen_tables["general gear 1"]),
             dice.roll_random_table("1d20", chargen_tables["general gear 2"]),
         ]
+
+    def show_sheet(self):
+        # first we need to build a string that lists the equipment
+        equipment = (
+            str(item)
+            for item in [self.armor, self.helmet, self.shield, self.weapon] + self.backpack
+            if item    
+        )
+
+        # format the values to plug into the display string
+        return _TEMP_SHEET.format(
+            name=self.name,
+            physique=self.physique,
+            coordination=self.coordination,
+            instinct=self.instinct,
+            reason=self.reason,
+            willpower=self.willpower,
+            auspice=self.auspice,
+            description=self.desc,
+            equipment=", ".join(equipment),        
+        )
+    
+    def apply(self):
+        # create a character object with given abilities
+        new_character = create_object(
+            TestAdvCharacter,
+            key=self.name,
+            attrs=(
+                ("physique", self.physique),
+                ("coordination", self.coordination),
+                ("instinct", self.instinct),
+                ("reason", self.reason),
+                ("willpower", self.willpower),
+                ("auspice", self.auspice),
+                ("hp", self.hp),
+                ("hp_max", self.hp_max),
+                ("desc", self.desc),
+            ),
+        )
+
+        # spawn random starting equipment (will require prototypes before it works)
+        if self.weapon:
+            weapon = spawn(self.weapon)
+            new_character.equipment.move(weapon)
+        if self.shield:
+            shield = spawn(self.shield)
+            new_character.equipment.move(shield)
+        if self.helmet:
+            helmet = spawn(self.helmet)
+            new_character.equipment.move(helmet)
+        if self.armor:
+            armor = spawn(self.armor)
+            new_character.equipment.move(armor)
+        
+        for item in self.backpack:
+            item = spawn(item)
+            new_character.equipment.add(item)
+        
+        return new_character
+    
+
+# Chargen Menu
+def node_chargen(caller, raw_string, **kwargs):
+
+    tmp_character = kwargs["tmp_character"]
+
+    text = tmp_character.show_sheet()
+
+    options = [
+        {
+            "desc": "Change your name",
+            "goto": ("node_change_name", kwargs)
+        }
+    ]
+
+    if tmp_character.ability_changes <= 0:
+        options.append(
+            {
+                "desc": "Swap two of your ability scores (once)",
+                "goto": ("node_swap_abilities", kwargs),
+            }
+        )
+    
+    options.append(
+        {
+            "desc": "Accept and create character",
+            "goto": ("node_accept_chargen", kwargs),
+        }
+    )
+
+    return text, options
+
+
+def _update_name(caller, raw_string, **kwargs):
+    '''
+    Used by node_change_name to check what user entered and update the name if appropriate
+    '''
+    if raw_string:
+        tmp_character = kwargs["tmp_character"]
+        tmp_character.name = raw_string.lower().capitalize()
+
+    return "node_chargen", kwargs
+
+
+def node_name_change(caller, raw_string, **kwargs):
+    '''
+    Change the random name of the character
+    '''
+    tmp_character = kwargs["tmp_character"]
+
+    text = (
+        f"Your current name is |w{tmp_character.name}|n. "
+        "Enter a new name or leave empty to abort."
+    )
+
+    options = {"key": "_default", "goto": (_update_name, kwargs)}
+    
+    return text, options
+
+
+def _swap_abilities(caller, raw_string, **kwargs):        
+    '''
+    Used by node_swap_abilities to parse the uders input and swap ability values
+    '''
+    
+    if raw_string:
+        abi1, *abi2 = raw_string.split(" ", 1)
+        # check for issues with the raw string from the user first
+        if not abi2:
+            caller.msg("That doesn't look right...")
+            return None, kwargs
+        abi2 = abi2[0]
+        abi1, abi2 = abi1.upper().strip(), abi2.upper().strip()
+        if abi1 not in _ABILITIES or abi2 not in _ABILITIES:
+            caller.msg("Not a familiar set of abilities...")
+            return None, kwargs
+        # otherwise, if the input looks readable we swap values
+        tmp_character = kwargs["tmp_character"]
+        abi1 = _ABILITIES[abi1]
+        abi2 = _ABILITIES[abi2]
+        abival1 = getattr(tmp_character, abi1)
+        abival2 = getattr(tmp_character, abi2)
+
+        setattr(tmp_character, abi1, abival2)
+        setattr(tmp_character, abi2, abival1)
+        tmp_character.ability_changes += 1
+
+    return "node_chargen", kwargs
+
+
+def node_swap_abilities(caller, raw_string, **kwargs):
+    '''
+    You can swap 2 ability scores, once
+    '''
+    tmp_character = kwargs["tmp_character"]
+
+    text = f"""
+Your current abilities:
+
+PHYS: {tmp_character.physique}
+COOR: {tmp_character.coordination}
+INST: {tmp_character.instinct}
+REAS: {tmp_character.reason}
+WILL: {tmp_character.willpower}
+AUSP: {tmp_character.auspice}
+
+You can swap the values of two abilities.
+You can only do this once!
+
+To swap the values of PHYS and WILL, for example, write |wPHYS WILL|n. Empty to abort.
+"""
+
+    options = {"key": "_default", "goto": (_swap_abilities, kwargs)}
+
+    return text, options
+
+
+def node_apply_character(caller, raw_string, **kwargs):
+    
+
+
+
+def start_chargen(caller, session=None):
+    '''
+    This is a start point for spinning up the chargen from a command later
+    '''
+    menutree = {}   # TODO menutree, I guess
+
+    # this generates all random components of the character
+    tmp_character = TemporaryCharacterSheet()
+
+    EvMenu(
+        caller,
+        menutree,
+        session=session,
+        startnode="node_chargen",
+        startnode_input=("", {"tmp_character": tmp_character}),
+    )

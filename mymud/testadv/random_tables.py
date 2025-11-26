@@ -615,7 +615,7 @@ initiative = [
     ("4-6", "PC acts first"),
 ]
 
-
+# Would need new at_death() call to use this, so it's greened out for now
 # death_and_dismemberment = [
 #     "dead",
 #     "dead",  # original says 'dismemberment' here, we don't simulate this
@@ -625,4 +625,4 @@ initiative = [
 #     "addled",  # -1d4 INT
 #     "rattled",  # -1d4 WIS
 #     "disfigured",  # -1d4 CHA
-]
+# ]
