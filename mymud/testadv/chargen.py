@@ -164,7 +164,7 @@ def node_chargen(caller, raw_string, **kwargs):
     options = [
         {
             "desc": "Change your name",
-            "goto": ("node_change_name", kwargs)
+            "goto": ("node_name_change", kwargs)
         }
     ]
 
@@ -188,7 +188,7 @@ def node_chargen(caller, raw_string, **kwargs):
 
 def _update_name(caller, raw_string, **kwargs):
     '''
-    Used by node_change_name to check what user entered and update the name if appropriate
+    Used by node_name_change to check what user entered and update the name if appropriate
     '''
     if raw_string:
         tmp_character = kwargs["tmp_character"]
@@ -277,7 +277,7 @@ def node_apply_character(caller, raw_string, **kwargs):
     tmp_character = kwargs["tmp_character"]
     new_character = tmp_character.apply()
 
-    caller.account.add_character(new_character)
+    caller.account.characters.add(new_character)
 
     text = "Character created!"
 
