@@ -1,0 +1,1 @@
+from evennia import AttributeProperty, DefaultRoom
