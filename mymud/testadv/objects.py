@@ -262,13 +262,13 @@ class WeaponBareHands(TestAdvWeapon):
     damage_roll = "1d4" # No monks in Knave, I guess
     quality = None      # We're assuming fists are indescructible, even thought it would be REALLY funny
 
-    def get_bare_hands():
-        '''
-        Get the bare hands
-        '''
-        global _BARE_HANDS
-        if not _BARE_HANDS:
-            _BARE_HANDS = search_object("Bare Hands", typeclass=WeaponBareHands).first()
-        if not _BARE_HANDS:
-            _BARE_HANDS = create_object(WeaponBareHands, key="Bare Hands")
-        return _BARE_HANDS
+def get_bare_hands():
+    '''
+    Get the bare hands
+    '''
+    global _BARE_HANDS
+    if not _BARE_HANDS:
+        _BARE_HANDS = search_object("Bare Hands", typeclass=WeaponBareHands).first()
+    if not _BARE_HANDS:
+        _BARE_HANDS = create_object(WeaponBareHands, key="Bare Hands")
+    return _BARE_HANDS
