@@ -1,0 +1,249 @@
+Running Batch-command processor - Automatic mode for batch.dept_of_liquidation (this might take some time) ...
+01/96: @create/drop The Waiting Room;liquidation_waiting:typec[...]
+["An error occurred while creating 'The Waiting Room' object: module 'evennia.utils.logger' has no attribute 'logtrace'"]
+02/96: @create/drop Corridor A;liquidation_corr_a:typeclasses.[...]
+["An error occurred while creating 'Corridor A' object: module 'evennia.utils.logger' has no attribute 'logtrace'"]
+03/96: @create/drop The Break Room;liquidation_break:typeclass[...]
+["An error occurred while creating 'The Break Room' object: module 'evennia.utils.logger' has no attribute 'logtrace'"]
+04/96: @create/drop Corridor B;liquidation_corr_b:evennia.cont[...]
+["An error occurred while creating 'Corridor B' object: module 'evennia.utils.logger' has no attribute 'logtrace'"]
+05/96: @create/drop The Cubicle Farm;liquidation_cubicles:even[...]
+["An error occurred while creating 'The Cubicle Farm' object: module 'evennia.utils.logger' has no attribute 'logtrace'"]
+06/96: @create/drop The Server Closet;liquidation_server:evenn[...]
+["An error occurred while creating 'The Server Closet' object: module 'evennia.utils.logger' has no attribute 'logtrace'"]
+07/96: @create/drop Ventilation Shaft;liquidation_vent:evennia[...]
+Until you find some light, there's not much you can do. Try feeling around, maybe you'll find something helpful!
+08/96: @create/drop Executive Antechamber;liquidation_ante:typ[...]
+Until you find some light, there's not much you can do. Try feeling around, maybe you'll find something helpful!
+09/96: @create/drop The Manager's Office;liquidation_office:ty[...]
+Until you find some light, there's not much you can do. Try feeling around, maybe you'll find something helpful!
+10/96: @create/drop The Fire Escape;liquidation_exit:typeclass[...]
+Until you find some light, there's not much you can do. Try feeling around, maybe you'll find something helpful!
+11/96: @desc The Waiting Room = A beige room with a low, water[...]
+Until you find some light, there's not much you can do. Try feeling around, maybe you'll find something helpful!
+12/96: @desc Corridor A = An endless stretch of gray carpet an[...]
+Until you find some light, there's not much you can do. Try feeling around, maybe you'll find something helpful!
+13/96: @desc The Break Room = The kitchenette. A coffee pot co[...]
+Until you find some light, there's not much you can do. Try feeling around, maybe you'll find something helpful!
+14/96: @desc Corridor B = The hallway continues, but the carpe[...]
+Until you find some light, there's not much you can do. Try feeling around, maybe you'll find something helpful!
+15/96: @desc The Cubicle Farm = A maze of gray fabric walls. Y[...]
+Until you find some light, there's not much you can do. Try feeling around, maybe you'll find something helpful!
+16/96: @desc The Server Closet = Pitch black. You can hear the[...]
+Until you find some light, there's not much you can do. Try feeling around, maybe you'll find something helpful!
+17/96: @desc Ventilation Shaft = A cramped, dusty tunnel. The [...]
+Until you find some light, there's not much you can do. Try feeling around, maybe you'll find something helpful!
+18/96: @desc Executive Antechamber = The carpet here is slight[...]
+Until you find some light, there's not much you can do. Try feeling around, maybe you'll find something helpful!
+19/96: @desc The Manager's Office = A massive desk dominates t[...]
+Until you find some light, there's not much you can do. Try feeling around, maybe you'll find something helpful!
+20/96: @desc The Fire Escape = A rusty metal platform hanging [...]
+Until you find some light, there's not much you can do. Try feeling around, maybe you'll find something helpful!
+21/96: @tel The Waiting Room                          
+Until you find some light, there's not much you can do. Try feeling around, maybe you'll find something helpful!
+22/96: @create/drop Sticky Note;liquidation_note:evennia.contr[...]
+Until you find some light, there's not much you can do. Try feeling around, maybe you'll find something helpful!
+23/96: @desc Sticky Note = A yellow square stuck to the wall.
+Until you find some light, there's not much you can do. Try feeling around, maybe you'll find something helpful!
+24/96: @set Sticky Note/readable_text = "THE BEATINGS WILL CON[...]
+Until you find some light, there's not much you can do. Try feeling around, maybe you'll find something helpful!
+25/96: @lock Sticky Note = get:false()                
+Until you find some light, there's not much you can do. Try feeling around, maybe you'll find something helpful!
+26/96: @tel Corridor A                                
+Until you find some light, there's not much you can do. Try feeling around, maybe you'll find something helpful!
+27/96: @create/drop Teetering File Cabinet;liquidation_cabinet[...]
+Until you find some light, there's not much you can do. Try feeling around, maybe you'll find something helpful!
+28/96: @desc Teetering File Cabinet = A tower of metal drawers[...]
+Until you find some light, there's not much you can do. Try feeling around, maybe you'll find something helpful!
+29/96: @set Teetering File Cabinet/climb_text = You scramble u[...]
+Until you find some light, there's not much you can do. Try feeling around, maybe you'll find something helpful!
+30/96: @lock Teetering File Cabinet = get:false()     
+Until you find some light, there's not much you can do. Try feeling around, maybe you'll find something helpful!
+31/96: @tel The Break Room                            
+Until you find some light, there's not much you can do. Try feeling around, maybe you'll find something helpful!
+32/96: @create/drop Lost & Found Box;liquidation_box:evennia.c[...]
+Until you find some light, there's not much you can do. Try feeling around, maybe you'll find something helpful!
+33/96: @desc Lost & Found Box = A cardboard box labeled 'DO NO[...]
+Until you find some light, there's not much you can do. Try feeling around, maybe you'll find something helpful!
+34/96: @set Lost & Found Box/rack_id = "liquidation_box_1"
+Until you find some light, there's not much you can do. Try feeling around, maybe you'll find something helpful!
+35/96: @set Lost & Found Box/available_weapons = ["plastic swo[...]
+Until you find some light, there's not much you can do. Try feeling around, maybe you'll find something helpful!
+36/96: @set Lost & Found Box/no_more_weapons_msg = The box is [...]
+Until you find some light, there's not much you can do. Try feeling around, maybe you'll find something helpful!
+37/96: @lock Lost & Found Box = get:false()           
+Until you find some light, there's not much you can do. Try feeling around, maybe you'll find something helpful!
+38/96: @create/drop Glow Stick;liquidation_glow:evennia.contri[...]
+Until you find some light, there's not much you can do. Try feeling around, maybe you'll find something helpful!
+39/96: @desc Glow Stick = A cracked chemical light. It hums ag[...]
+Until you find some light, there's not much you can do. Try feeling around, maybe you'll find something helpful!
+40/96: @tel Corridor B                                
+Until you find some light, there's not much you can do. Try feeling around, maybe you'll find something helpful!
+41/96: @set here/weather_msgs = ["Oily water drips onto your n[...]
+Until you find some light, there's not much you can do. Try feeling around, maybe you'll find something helpful!
+42/96: @tel The Cubicle Farm                          
+Until you find some light, there's not much you can do. Try feeling around, maybe you'll find something helpful!
+43/96: @set here/puzzle_key = "liquidation_id_card"   
+Until you find some light, there's not much you can do. Try feeling around, maybe you'll find something helpful!
+44/96: @set here/success_teleport_to = "liquidation_ante"
+Until you find some light, there's not much you can do. Try feeling around, maybe you'll find something helpful!
+45/96: @set here/failure_teleport_to = "liquidation_waiting"
+Until you find some light, there's not much you can do. Try feeling around, maybe you'll find something helpful!
+46/96: @set here/success_teleport_msg = The scanner beeps happ[...]
+Until you find some light, there's not much you can do. Try feeling around, maybe you'll find something helpful!
+47/96: @set here/failure_teleport_msg = SECURITY ALERT. UNAUTH[...]
+Until you find some light, there's not much you can do. Try feeling around, maybe you'll find something helpful!
+48/96: @tel The Server Closet                         
+Until you find some light, there's not much you can do. Try feeling around, maybe you'll find something helpful!
+49/96: @create/drop Employee ID Card;liquidation_id_card:typec[...]
+Until you find some light, there's not much you can do. Try feeling around, maybe you'll find something helpful!
+50/96: @desc Employee ID Card = A plastic badge. The photo is [...]
+Until you find some light, there's not much you can do. Try feeling around, maybe you'll find something helpful!
+51/96: @tel Ventilation Shaft                         
+Until you find some light, there's not much you can do. Try feeling around, maybe you'll find something helpful!
+52/96: @set here/west_exit = "liquidation_server"     
+Until you find some light, there's not much you can do. Try feeling around, maybe you'll find something helpful!
+53/96: @set here/east_exit = "liquidation_ante"       
+Until you find some light, there's not much you can do. Try feeling around, maybe you'll find something helpful!
+54/96: @set here/fall_exit = "liquidation_cubicles"   
+Until you find some light, there's not much you can do. Try feeling around, maybe you'll find something helpful!
+55/96: @set here/fall_msg = The plastic cracks! You tumble dow[...]
+Until you find some light, there's not much you can do. Try feeling around, maybe you'll find something helpful!
+56/96: @tel Executive Antechamber                     
+Until you find some light, there's not much you can do. Try feeling around, maybe you'll find something helpful!
+57/96: @create/drop The Shift Supervisor;liquidation_boss:even[...]
+Until you find some light, there's not much you can do. Try feeling around, maybe you'll find something helpful!
+58/96: @sethome The Shift Supervisor = Executive Antechamber
+Until you find some light, there's not much you can do. Try feeling around, maybe you'll find something helpful!
+59/96: @set The Shift Supervisor/patrolling = True    
+Until you find some light, there's not much you can do. Try feeling around, maybe you'll find something helpful!
+60/96: @set The Shift Supervisor/aggressive = True    
+Until you find some light, there's not much you can do. Try feeling around, maybe you'll find something helpful!
+61/96: @set The Shift Supervisor/hunting = True       
+Until you find some light, there's not much you can do. Try feeling around, maybe you'll find something helpful!
+62/96: @set The Shift Supervisor/desc_alive = A suit of armor [...]
+Until you find some light, there's not much you can do. Try feeling around, maybe you'll find something helpful!
+63/96: @set The Shift Supervisor/desc_dead = A pile of scrap m[...]
+Until you find some light, there's not much you can do. Try feeling around, maybe you'll find something helpful!
+64/96: @create/drop Red Tape;liquidation_whip:evennia.contrib.[...]
+Until you find some light, there's not much you can do. Try feeling around, maybe you'll find something helpful!
+65/96: @tel/quiet Red Tape = The Shift Supervisor     
+Until you find some light, there's not much you can do. Try feeling around, maybe you'll find something helpful!
+66/96: mobon The Shift Supervisor                     
+Until you find some light, there's not much you can do. Try feeling around, maybe you'll find something helpful!
+67/96: @tel The Waiting Room                          
+Until you find some light, there's not much you can do. Try feeling around, maybe you'll find something helpful!
+68/96: @open north;n = Corridor A                     
+Until you find some light, there's not much you can do. Try feeling around, maybe you'll find something helpful!
+69/96: @tel Corridor A                                
+Until you find some light, there's not much you can do. Try feeling around, maybe you'll find something helpful!
+70/96: @open south;s = The Waiting Room               
+Until you find some light, there's not much you can do. Try feeling around, maybe you'll find something helpful!
+71/96: @open east;e = The Break Room                  
+Until you find some light, there's not much you can do. Try feeling around, maybe you'll find something helpful!
+72/96: @open west;w = Corridor B                      
+Until you find some light, there's not much you can do. Try feeling around, maybe you'll find something helpful!
+73/96: @open vent;up = The Server Closet              
+Until you find some light, there's not much you can do. Try feeling around, maybe you'll find something helpful!
+74/96: @lock vent = view:tag(tutorial_climbed_tree, tutorial_w[...]
+Until you find some light, there's not much you can do. Try feeling around, maybe you'll find something helpful!
+75/96: @tel The Break Room                            
+Until you find some light, there's not much you can do. Try feeling around, maybe you'll find something helpful!
+76/96: @open west;w = Corridor A                      
+Until you find some light, there's not much you can do. Try feeling around, maybe you'll find something helpful!
+77/96: @tel Corridor B                                
+Until you find some light, there's not much you can do. Try feeling around, maybe you'll find something helpful!
+78/96: @open east;e = Corridor A                      
+Until you find some light, there's not much you can do. Try feeling around, maybe you'll find something helpful!
+79/96: @open north;n = The Cubicle Farm               
+Until you find some light, there's not much you can do. Try feeling around, maybe you'll find something helpful!
+80/96: @tel The Cubicle Farm                          
+Until you find some light, there's not much you can do. Try feeling around, maybe you'll find something helpful!
+81/96: @open south;s = Corridor B                     
+Until you find some light, there's not much you can do. Try feeling around, maybe you'll find something helpful!
+82/96: @open north;n = Executive Antechamber          
+Until you find some light, there's not much you can do. Try feeling around, maybe you'll find something helpful!
+83/96: @tel The Server Closet                         
+Until you find some light, there's not much you can do. Try feeling around, maybe you'll find something helpful!
+84/96: @open down;d = Corridor A                      
+Until you find some light, there's not much you can do. Try feeling around, maybe you'll find something helpful!
+85/96: @open north;n = Ventilation Shaft              
+Until you find some light, there's not much you can do. Try feeling around, maybe you'll find something helpful!
+86/96: @tel Ventilation Shaft                         
+Until you find some light, there's not much you can do. Try feeling around, maybe you'll find something helpful!
+87/96: @open south;s = The Server Closet              
+Until you find some light, there's not much you can do. Try feeling around, maybe you'll find something helpful!
+88/96: @open north;n = Executive Antechamber          
+Until you find some light, there's not much you can do. Try feeling around, maybe you'll find something helpful!
+89/96: @tel Executive Antechamber                     
+Until you find some light, there's not much you can do. Try feeling around, maybe you'll find something helpful!
+90/96: @open south;s = The Cubicle Farm               
+Until you find some light, there's not much you can do. Try feeling around, maybe you'll find something helpful!
+91/96: @open north;n = The Manager's Office           
+Until you find some light, there's not much you can do. Try feeling around, maybe you'll find something helpful!
+92/96: @tel The Manager's Office                      
+Until you find some light, there's not much you can do. Try feeling around, maybe you'll find something helpful!
+93/96: @open south;s = Executive Antechamber          
+Until you find some light, there's not much you can do. Try feeling around, maybe you'll find something helpful!
+94/96: @open out;exit = The Fire Escape               
+Until you find some light, there's not much you can do. Try feeling around, maybe you'll find something helpful!
+95/96: @tel The Fire Escape                           
+Until you find some light, there's not much you can do. Try feeling around, maybe you'll find something helpful!
+96/96: @open in = The Manager's Office                
+Until you find some light, there's not much you can do. Try feeling around, maybe you'll find something helpful!
+End of batch file.
+  Batchfile 'batch.dept_of_liquidation' applied.
+Until you find some light, there's not much you can do. Try feeling around, maybe you'll find something helpful!
+Blind, you think you find some sort of object on the ground, but it turns out to be just a stone.
+Until you find some light, there's not much you can do. Try feeling around, maybe you'll find something helpful!
+Until you find some light, there's not much you can do. Try feeling around, maybe you'll find something helpful!
+Until you find some light, there's not much you can do. Try feeling around, maybe you'll find something helpful!
+Until you find some light, there's not much you can do. Try feeling around, maybe you'll find something helpful!
+Until you find some light, there's not much you can do. Try feeling around, maybe you'll find something helpful!
+Blind, you bump into a wall. The wall seems to be covered with some sort of vegetation, but its too damp to burn.
+Until you find some light, there's not much you can do. Try feeling around, maybe you'll find something helpful!
+It's pitch black. You fumble around but cannot find anything.
+You can't see anything, but the air is damp. It feels like you are far underground.
+Traceback (most recent call last):
+  File "C:\Users\sedqo\Desktop\mud_bootcamp\mymud\testadv\characters.py", line 134, in at_object_receive
+    self.equipment.add(moved_object)
+  File "C:\Users\sedqo\Desktop\mud_bootcamp\mymud\testadv\equipment.py", line 90, in add
+    if self.validate_slot_usage(obj):
+       ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "C:\Users\sedqo\Desktop\mud_bootcamp\mymud\testadv\equipment.py", line 79, in validate_slot_usage
+    raise EquipmentError(f"{obj.key} isn't equippable.")
+testadv.equipment.EquipmentError: splinter isn't equippable.
+
+During handling of the above exception, another exception occurred:
+
+Traceback (most recent call last):
+  File "C:\Users\sedqo\Desktop\mud_bootcamp\.venv\Lib\site-packages\evennia\commands\cmdhandler.py", line 630, in _run_command
+    ret = cmd.func()
+          ^^^^^^^^^^
+  File "C:\Users\sedqo\Desktop\mud_bootcamp\.venv\Lib\site-packages\evennia\contrib\tutorials\tutorial_world\rooms.py", line 909, in func
+    create_object(LightSource, key="splinter", location=caller)
+  File "C:\Users\sedqo\Desktop\mud_bootcamp\.venv\Lib\site-packages\evennia\utils\create.py", line 117, in create_object
+    return ObjectDB.objects.create_object(*args, **kwargs)
+           ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "C:\Users\sedqo\Desktop\mud_bootcamp\.venv\Lib\site-packages\evennia\objects\manager.py", line 715, in create_object
+    new_object.save()
+  File "C:\Users\sedqo\Desktop\mud_bootcamp\.venv\Lib\site-packages\evennia\utils\idmapper\models.py", line 452, in save
+    super().save(*args, **kwargs)
+  File "C:\Users\sedqo\Desktop\mud_bootcamp\.venv\Lib\site-packages\django\db\models\base.py", line 902, in save
+    self.save_base(
+  File "C:\Users\sedqo\Desktop\mud_bootcamp\.venv\Lib\site-packages\django\db\models\base.py", line 1023, in save_base
+    post_save.send(
+  File "C:\Users\sedqo\Desktop\mud_bootcamp\.venv\Lib\site-packages\django\dispatch\dispatcher.py", line 189, in send
+    response = receiver(signal=self, sender=sender, **named)
+               ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "C:\Users\sedqo\Desktop\mud_bootcamp\.venv\Lib\site-packages\evennia\typeclasses\models.py", line 84, in call_at_first_save
+    instance.at_first_save()
+  File "C:\Users\sedqo\Desktop\mud_bootcamp\.venv\Lib\site-packages\evennia\objects\objects.py", line 1972, in at_first_save
+    cdict["location"].at_object_receive(self, None)
+  File "C:\Users\sedqo\Desktop\mud_bootcamp\mymud\testadv\characters.py", line 136, in at_object_receive
+    logger.logtrace()
+    ^^^^^^^^^^^^^^^
+AttributeError: module 'evennia.utils.logger' has no attribute 'logtrace'. Did you mean: 'log_trace'?
+
+An untrapped error occurred.
+(Traceback was logged 25-11-27 20:31:50-05).
