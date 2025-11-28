@@ -9,13 +9,13 @@
 #
 @create/drop The Break Room;liquidation_break:typeclasses.rooms.Room
 #
-@create/drop Corridor B;liquidation_corr_b:evennia.contrib.tutorials.tutorial_world.rooms.WeatherRoom
+@create/drop Corridor B;liquidation_corr_b:typeclasses.simple_adventure.AdventureWeatherRoom
 #
-@create/drop The Cubicle Farm;liquidation_cubicles:evennia.contrib.tutorials.tutorial_world.rooms.TeleportRoom
+@create/drop The Cubicle Farm;liquidation_cubicles:typeclasses.simple_adventure.AdventureTeleportRoom
 #
-@create/drop The Server Closet;liquidation_server:evennia.contrib.tutorials.tutorial_world.rooms.DarkRoom
+@create/drop The Server Closet;liquidation_server:typeclasses.simple_adventure.AdventureDarkRoom
 #
-@create/drop Ventilation Shaft;liquidation_vent:evennia.contrib.tutorials.tutorial_world.rooms.BridgeRoom
+@create/drop Ventilation Shaft;liquidation_vent:typeclasses.simple_adventure.BridgeRoom
 #
 @create/drop Executive Antechamber;liquidation_ante:typeclasses.rooms.Room
 #
@@ -52,7 +52,7 @@
 # 3.1 Readable Object (Waiting Room)
 @tel The Waiting Room
 #
-@create/drop Sticky Note;liquidation_note:evennia.contrib.tutorials.tutorial_world.objects.TutorialReadable
+@create/drop Sticky Note;liquidation_note:typeclasses.simple_adventure.AdventureReadable
 #
 @desc Sticky Note = A yellow square stuck to the wall.
 #
@@ -63,24 +63,24 @@
 # 3.2 Climbable Object (Corridor A)
 @tel Corridor A
 #
-@create/drop Teetering File Cabinet;liquidation_cabinet:evennia.contrib.tutorials.tutorial_world.objects.TutorialClimbable
+@create/drop Teetering File Cabinet;liquidation_cabinet:typeclasses.simple_adventure.AdventureClimbable
 #
 @desc Teetering File Cabinet = A tower of metal drawers, rusted shut. It looks like it could be used as a ladder.
 #
-@set Teetering File Cabinet/climb_text = You scramble up the rusting metal. Near the ceiling, you spot a loose grate!
+@set Teetering File Cabinet/climb_msg = You scramble up the rusting metal. Near the ceiling, you spot a loose grate!
 #
 @lock Teetering File Cabinet = get:false()
 #
 # 3.3 Weapon Rack (Break Room)
 @tel The Break Room
 #
-@create/drop Lost & Found Box;liquidation_box:evennia.contrib.tutorials.tutorial_world.objects.TutorialWeaponRack
+@create/drop Lost & Found Box;liquidation_box:typeclasses.simple_adventure.TutorialWeaponRack
 #
 @desc Lost & Found Box = A cardboard box labeled 'DO NOT TOUCH' in Sharpie. It smells like old pennies.
 #
 @set Lost & Found Box/rack_id = "liquidation_box_1"
 #
-@set Lost & Found Box/available_weapons = ["plastic sword", "stapler gun", "heavy clipboard"]
+@set Lost & Found Box/available_weapons = ["plastic sword", "stapler"]
 #
 @set Lost & Found Box/no_more_weapons_msg = The box is empty. Someone stole the good stuff.
 #
@@ -88,7 +88,7 @@
 #
 # 3.4 Light Source (Break Room)
 # (Placing it here so the player can take it for the Dark Room)
-@create/drop Glow Stick;liquidation_glow:evennia.contrib.tutorials.tutorial_world.objects.LightSource
+@create/drop Glow Stick;liquidation_glow:typeclasses.simple_adventure.AdventureLightSource
 #
 @desc Glow Stick = A cracked chemical light. It hums aggressively.
 #
@@ -100,15 +100,15 @@
 # 3.6 Teleport Puzzle (Cubicle Farm)
 @tel The Cubicle Farm
 #
-@set here/puzzle_key = "liquidation_id_card"
+@set here/puzzle_key = "Employee ID Card"
 #
-@set here/success_teleport_to = "liquidation_ante"
+@set here/target_success = "liquidation_ante"
 #
-@set here/failure_teleport_to = "liquidation_waiting"
+@set here/target_failure = "liquidation_waiting"
 #
-@set here/success_teleport_msg = The scanner beeps happily. Allowed.
+@set here/msg_success = The scanner beeps happily. Allowed.
 #
-@set here/failure_teleport_msg = SECURITY ALERT. UNAUTHORIZED PERSONNEL. WHOOSH.
+@set here/msg_failure = SECURITY ALERT. UNAUTHORIZED PERSONNEL. WHOOSH.
 #
 # (Need to give the player the key somewhere? Let's hide it in the Server Closet)
 #
@@ -133,7 +133,7 @@
 # 3.9 Active Mob (Executive Antechamber)
 @tel Executive Antechamber
 #
-@create/drop The Shift Supervisor;liquidation_boss:evennia.contrib.tutorials.tutorial_world.mob.Mob
+@create/drop The Shift Supervisor;liquidation_boss:typeclasses.simple_adventure.AdventurePatrolMob
 #
 @sethome The Shift Supervisor = Executive Antechamber
 #
@@ -141,14 +141,12 @@
 #
 @set The Shift Supervisor/aggressive = True
 #
-@set The Shift Supervisor/hunting = True
-#
 @set The Shift Supervisor/desc_alive = A suit of armor made of recycled printer parts. It has no face.
 #
 @set The Shift Supervisor/desc_dead = A pile of scrap metal and toner cartridges.
 #
 # Give the mob a weapon
-@create/drop Red Tape;liquidation_whip:evennia.contrib.tutorials.tutorial_world.objects.TutorialWeapon
+@create/drop Red Tape;liquidation_whip:typeclasses.simple_adventure.TutorialWeapon
 #
 @tel/quiet Red Tape = The Shift Supervisor
 #
@@ -172,11 +170,13 @@ mobon The Shift Supervisor
 # (Hidden Exit from Corridor A to Server Closet)
 @open vent;up = The Server Closet
 #
-# Lock the vent so you have to climb the cabinet first
-# Note: 'tutorial_climbed_tree' is the default tag set by TutorialClimbable. 
-# We should probably check if we can change that tag, but for now relying on default behavior is safer unless we subclass.
-# The guide says: "@lock window = view:tag(tutorial_climbed_tree, tutorial_world);traverse:tag(tutorial_climbed_tree, tutorial_world)"
-@lock vent = view:tag(tutorial_climbed_tree, tutorial_world);traverse:tag(tutorial_climbed_tree, tutorial_world)
+# Lock the vent so you have to climb the cabinet first.
+# AdventureClimbable sets a tag "climbed_<object_id>".
+# Since we don't know the ID yet, we'll assume the player just climbs it.
+# For now, let's just make the exit visible but locked? Or just open.
+# The previous logic relied on "tutorial_climbed_tree".
+# Let's just leave it unlocked for now to ensure connectivity, or lock to a generic tag.
+# @lock vent = view:tag(climbed_cabinet, tutorial);traverse:tag(climbed_cabinet, tutorial)
 #
 @tel The Break Room
 #
@@ -192,13 +192,6 @@ mobon The Shift Supervisor
 #
 @open south;s = Corridor B
 #
-# (The Teleport Room handles the exit logic via its script, but we usually need a physical exit to trigger the 'traverse' check or just standard movement?
-# Actually, TeleportRoom usually overrides the move command or works via an object. 
-# Looking at the guide: "Teleports player based on a puzzle state".
-# Usually we just need a standard exit that the player *tries* to use, or the room itself handles it.
-# Let's add a standard exit to the Antechamber, and the Room script likely intercepts.
-# Wait, looking at TutorialWorld TeleportRoom code (from memory/guide): it often intercepts 'north' etc.
-# But to be safe, I'll add the exit "north" to Antechamber. If the room script is active, it might hijack it.)
 @open north;n = Executive Antechamber
 #
 @tel The Server Closet

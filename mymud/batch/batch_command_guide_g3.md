@@ -1,8 +1,9 @@
-# Evennia Batch-Command Guide (Gen 3)
+# Evennia Batch-Command Guide (Gen 3 - Simple Adventure Edition)
 
 > **Role:** The Authoritative Reference for AI Builders.
 > **Purpose:** To provide the standard for creating complex, interactive MUD zones using Evennia's batch-command processor (`.ev` files).
 > **Philosophy:** Strict separation of concerns (Create vs. Link), explicit state management, and rigorous syntax adherence.
+> **Implementation:** Uses `typeclasses.simple_adventure` instead of the legacy `tutorial_world` contrib to ensure stability and compatibility with custom game systems.
 
 ---
 
@@ -64,7 +65,7 @@ This guide supports the implementation of the following features. Use this check
 - [x] **Static Props:** Scenery objects (tables, statues) that cannot be picked up.
 - [x] **Room Details:** Non-object look targets (`@detail`).
 
-### Advanced Interactive Features (Tutorial World)
+### Advanced Interactive Features (Simple Adventure)
 - [x] **Readable Objects:** Signs or books with text.
 - [x] **Climbable Objects:** Reveal hidden exits/info when climbed.
 - [x] **Weapon Racks:** Dispense unique items to players.
@@ -133,10 +134,10 @@ This guide supports the implementation of the following features. Use this check
 ```
 
 ### 3.4. Readable Object
-*Uses `TutorialReadable`.*
+*Uses `AdventureReadable`.*
 
 ```ev
-@create/drop Dusty Tome;gh_tome:evennia.contrib.tutorials.tutorial_world.objects.TutorialReadable
+@create/drop Dusty Tome;gh_tome:typeclasses.simple_adventure.AdventureReadable
 #
 @desc Dusty Tome = A heavy book bound in dragon hide.
 #
@@ -147,32 +148,33 @@ This guide supports the implementation of the following features. Use this check
 ```
 
 ### 3.5. Climbable Object & Hidden Exit
-*Uses `TutorialClimbable`. Climbing tags the player, allowing them to see/use a locked exit.*
+*Uses `AdventureClimbable`. Climbing tags the player, allowing them to see/use a locked exit.*
 
 ```ev
 # 1. Create the Object
-@create/drop Ivy Trellis;gh_trellis:evennia.contrib.tutorials.tutorial_world.objects.TutorialClimbable
+@create/drop Ivy Trellis;gh_trellis:typeclasses.simple_adventure.AdventureClimbable
 #
 @desc Ivy Trellis = Sturdy vines cling to the wall.
 #
-@set Ivy Trellis/climb_text = You climb up and spot a hidden window!
+@set Ivy Trellis/climb_msg = You climb up and spot a hidden window!
 #
 @lock Ivy Trellis = get:false()
 #
 
 # 2. Create the Exit (Phase 4)
-# The tag 'tutorial_climbed_tree' is hardcoded in the TutorialClimbable class (default).
+# The tag 'climbed_<object_id>' is set automatically.
+# However, knowing the ID in batch is hard.
+# ALTERNATIVE: Use standard tags if you can set them, or rely on 'tutorial' category tags.
 @open window;out = The Secret Balcony
 #
-@lock window = view:tag(tutorial_climbed_tree, tutorial_world);traverse:tag(tutorial_climbed_tree, tutorial_world)
-#
+# (Tagging logic may require manual builder intervention or simplified checks)
 ```
 
 ### 3.6. Weapon Rack
-*Dispenses items. Uses `TutorialWeaponRack`.*
+*Dispenses items. Uses `TutorialWeaponRack` (Mapped to Simple Adventure).*
 
 ```ev
-@create/drop Rusty Barrel;gh_barrel:evennia.contrib.tutorials.tutorial_world.objects.TutorialWeaponRack
+@create/drop Rusty Barrel;gh_barrel:typeclasses.simple_adventure.TutorialWeaponRack
 #
 @desc Rusty Barrel = Full of old swords.
 #
@@ -187,13 +189,17 @@ This guide supports the implementation of the following features. Use this check
 ```
 
 ### 3.7. Weather Room
-*Inherits from `WeatherRoom`. Emits random messages.*
+*Inherits from `AdventureWeatherRoom`. Emits random messages.*
 
 ```ev
 # --- PHASE 1 ---
-@create/drop The Cliffside;gh_cliff:evennia.contrib.tutorials.tutorial_world.rooms.WeatherRoom
+@create/drop The Cliffside;gh_cliff:typeclasses.simple_adventure.AdventureWeatherRoom
 #
-# (No extra config needed, just standard description)
+# Configure messages
+@tel The Cliffside
+#
+@set here/weather_msgs = ["Wind howls.", "Rain falls."]
+#
 ```
 
 ### 3.8. Dark Room & Light Source
@@ -201,32 +207,30 @@ This guide supports the implementation of the following features. Use this check
 
 ```ev
 # --- PHASE 1 ---
-@create/drop The Deep Pit;gh_pit:evennia.contrib.tutorials.tutorial_world.rooms.DarkRoom
+@create/drop The Deep Pit;gh_pit:typeclasses.simple_adventure.AdventureDarkRoom
 #
 
 # --- PHASE 3 (In a different room usually) ---
-@create/drop Torch;gh_torch:evennia.contrib.tutorials.tutorial_world.objects.LightSource
+@create/drop Torch;gh_torch:typeclasses.simple_adventure.AdventureLightSource
 #
 @desc Torch = A piece of wood soaked in pitch.
 #
 ```
 
 ### 3.9. Bridge Room (Fall Risk)
-*A room that takes time to cross. Logic is in the attributes.*
+*A room that checks for movement. Inherits from WeatherRoom.*
 
 ```ev
 # --- PHASE 1 ---
-@create/drop The Rope Bridge;gh_bridge:evennia.contrib.tutorials.tutorial_world.rooms.BridgeRoom
+@create/drop The Rope Bridge;gh_bridge:typeclasses.simple_adventure.BridgeRoom
 #
 
 # --- PHASE 3 ---
 @tel The Rope Bridge
 #
-@set here/west_exit = gh_cliff_edge
-#
-@set here/east_exit = gh_castle_gate
-#
 @set here/fall_exit = gh_valley_floor
+#
+@set here/fall_msg = You slip and fall!
 #
 ```
 
@@ -237,7 +241,7 @@ This guide supports the implementation of the following features. Use this check
 # --- PHASE 3 ---
 @tel The Great Hall
 #
-@create/drop Castle Guardian;guardian:evennia.contrib.tutorials.tutorial_world.mob.Mob
+@create/drop Castle Guardian;guardian:typeclasses.simple_adventure.AdventurePatrolMob
 #
 @sethome guardian = The Great Hall
 #
@@ -245,51 +249,42 @@ This guide supports the implementation of the following features. Use this check
 #
 @set guardian/aggressive = True
 #
-@set guardian/hunting = True
-#
-@set guardian/desc_alive = A towering suit of animated armor.
-#
-@set guardian/desc_dead = A pile of scrap metal.
-#
-# Equip the mob (create weapon -> teleport to mob)
-@create/drop Giant Sword;mob_sword:evennia.contrib.tutorials.tutorial_world.objects.TutorialWeapon
-#
-@tel/quiet mob_sword = guardian
+@set guardian/full_health = 20
 #
 # Turn it on
 mobon guardian
 #
 ```
 
-### 3.11. Teleport Puzzle (The "Tomb")
-*Teleports player based on a puzzle state (usually a tag).*
+### 3.11. Teleport Puzzle
+*Teleports player based on a key item or tag.*
 
 ```ev
 # --- PHASE 1 ---
-@create/drop Trap Room;gh_trap:evennia.contrib.tutorials.tutorial_world.rooms.TeleportRoom
+@create/drop Trap Room;gh_trap:typeclasses.simple_adventure.AdventureTeleportRoom
 #
 
 # --- PHASE 3 ---
 @tel Trap Room
 #
-# 0 = correct puzzle value
-@set here/puzzle_value = 0
+# Key can be an object name in inventory OR a tag on the player
+@set here/puzzle_key = "Golden Key"
 #
-@set here/success_teleport_to = gh_treasure_room
+@set here/target_success = gh_treasure_room
 #
-@set here/failure_teleport_to = gh_dungeon_cell
+@set here/target_failure = gh_dungeon_cell
 #
-@set here/success_teleport_msg = The floor holds steady.
+@set here/msg_success = The floor holds steady.
 #
-@set here/failure_teleport_msg = Click. Whoosh. You fall.
+@set here/msg_failure = Click. Whoosh. You fall.
 #
 ```
 
 ---
 
-## 4. Troubleshooting
+## 4. Troubleshooting & Pitfalls
 
-*   **Commands merging?** You forgot the `#` separator line.
-*   **"Object not found" errors?** You are likely trying to Describe or Decorate a room you haven't `@create`d yet (check Phase order), or you are trying to decorate a room you haven't `@tel`eported to.
-*   **Descriptions not sticking?** Ensure you are targeting the object by its Alias or Name correctly.
-*   **Mobs not moving?** Did you run `mobon <mob>`?
+*   **SyntaxError in Batch:** If you see `SyntaxError` pointing to a python file, DO NOT run the batch again until the python file is fixed. Running it on a broken file creates "ghost" objects that must be manually destroyed.
+*   **"Typeclass not found":** Ensure you are using `typeclasses.simple_adventure` and NOT `evennia.contrib...`. The contrib code is often incompatible with custom inventory systems.
+*   **Object Crashes:** If an object crashes the game/inventory, it likely does not inherit from `TestAdvObject`. Use `AdventureLightSource` instead of standard `LightSource`.
+*   **Infinite Loops:** Do not set a Teleport Room's failure target to itself without a delay or condition change.

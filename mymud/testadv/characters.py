@@ -133,7 +133,10 @@ class TestAdvCharacter(LivingMixin, DefaultCharacter):
         try:
             self.equipment.add(moved_object)
         except EquipmentError:
-            logger.logtrace()
+            # this is not an equipment object, that's fine.
+            pass
+        except Exception:
+            logger.log_trace()
 
     def at_object_leave(self, moved_object, destination, **kwargs):
         '''
