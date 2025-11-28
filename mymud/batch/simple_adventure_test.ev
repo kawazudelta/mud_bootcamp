@@ -1,0 +1,52 @@
+# Simple Adventure Test - Core Features Only
+#
+# --- PHASE 1: CREATE ROOMS ---
+@create/drop The Foyer;sat_foyer:typeclasses.rooms.Room
+#
+@create/drop The Hallway;sat_hallway:typeclasses.rooms.Room
+#
+@create/drop The Armory;sat_armory:typeclasses.rooms.Room
+#
+
+# --- PHASE 2: DESCRIBE ROOMS ---
+@desc The Foyer = A small, dusty entry room. The floorboards creak under your feet.
+#
+@desc The Hallway = A long narrow passage. Portraits of forgotten ancestors line the walls.
+#
+@desc The Armory = A stone-walled room smelling of oil and iron.
+#
+
+# --- PHASE 3: DECORATE ROOMS ---
+@tel The Foyer
+#
+@detail floor;floorboards = The wood is warped and gray with age.
+#
+@create/drop Coat Rack;sat_rack:typeclasses.objects.Object
+#
+@desc Coat Rack = An empty wooden stand.
+#
+@lock Coat Rack = get:false()
+#
+
+@tel The Armory
+#
+@create/drop Training Sword;sat_sword:testadv.objects.TestAdvWeapon
+#
+@desc Training Sword = A dull iron blade wrapped in leather.
+#
+
+# --- PHASE 4: LINK ROOMS ---
+@tel The Foyer
+#
+@open north;n = The Hallway
+#
+@tel The Hallway
+#
+@open south;s = The Foyer
+#
+@open east;e = The Armory
+#
+@tel The Armory
+#
+@open west;w = The Hallway
+#
