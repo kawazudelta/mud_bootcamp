@@ -151,6 +151,47 @@ class CombatActionStunt(CombatAction):
             self.msg(f"$You({defender.key}) $conj(resist)! $You() $conj(fail) the stunt.")
 
 
+class CombatActionUseItem(CombatAction):
+    """
+    Use an item in combat. This is meant for one-off or limited-use items (so things like scrolls and potions, not swords and shields). If this is some sort of weapon or spell rune, we refer to the item to determine what to use for attack/defense rolls.
+
+    action_dict = {
+            "key": "use",
+            "item": Object
+            "target": Character/NPC/Object/None
+        }
+
+    """
+    def execute(self):
+        item = self.item
+        user = self.combatant
+        target = self.target
+
+        if item.at_pre_use(user, target):
+            item.use(
+                user,
+                target,
+                advantage=self.combathandler.has_advantage(user, target),
+                disadvantage=self.combathandler.has_disadvantage(user, target),
+            )
+            item.at_post_use(user, target)
+
+
+class CombatActionWield(CombatAction):
+    """
+    Wield a new weapon (or spell) from your inventory. This will 
+	    swap out the one you are currently wielding, if any.
+
+    action_dict = {
+            "key": "wield",
+            "item": Object
+        }
+
+    """
+
+    def execute(self):
+        self.combatant.equipment.move(self.item)
+
 
 class TestAdvCombatBaseHandler(DefaultScript):
     '''

@@ -186,3 +186,51 @@ class TestCombatActions(EvenniaTestCase):
         
         # Should NOT give advantage
         self.combathandler.give_advantage.assert_not_called()
+
+    def test_action_use_item(self):
+        """
+        Test the use item action.
+        """
+        # Create a mock item
+        item = create_object("evennia.objects.objects.DefaultObject", key="Potion", location=self.attacker)
+        item.at_pre_use = MagicMock(return_value=True)
+        item.use = MagicMock()
+        item.at_post_use = MagicMock()
+        
+        action_dict = {
+            "key": "use",
+            "item": item,
+            "target": self.target
+        }
+        action = combat_base.CombatActionUseItem(self.combathandler, self.attacker, action_dict)
+        
+        action.execute()
+        
+        item.use.assert_called_with(
+            self.attacker,
+            self.target,
+            advantage=False,
+            disadvantage=False
+        )
+        item.at_post_use.assert_called_with(self.attacker, self.target)
+
+    def test_action_wield(self):
+        """
+        Test the wield action.
+        """
+        # Create a new weapon to wield
+        new_weapon = create_object("evennia.objects.objects.DefaultObject", key="Axe", location=self.attacker)
+        
+        # Mock the equipment handler on the attacker
+        self.attacker.equipment = MagicMock()
+        self.attacker.equipment.move = MagicMock()
+
+        action_dict = {
+            "key": "wield",
+            "item": new_weapon
+        }
+        action = combat_base.CombatActionWield(self.combathandler, self.attacker, action_dict)
+        
+        action.execute()
+        
+        self.attacker.equipment.move.assert_called_with(new_weapon)
