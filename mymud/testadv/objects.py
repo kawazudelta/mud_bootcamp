@@ -155,7 +155,7 @@ class TestAdvWeapon(TestAdvObject):
         '''
         location = attacker.location
 
-        # your opposed_saving_throw function returns two values (is_hit, quality), not three.
+        # your opposed_saving_throw function returns three values (is_hit, quality, txt).
         is_hit, quality, txt = rules.dice.opposed_saving_throw(
             attacker,
             target,

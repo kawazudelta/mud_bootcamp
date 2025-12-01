@@ -160,36 +160,39 @@ class TestAdvRollEngine:
         defender_quality = self.is_critical(defender_roll)
 
         # Return a descriptive string
-        txt = f"Roll vs {defense_type.value}({defender_target}):\n{txt}"
+        txt = (
+            f"Attack Roll ({attack_type.value}): {attacker_roll} (Target: {attacker_target}) "
+            f"| Defense Roll ({defense_type.value}): {defender_roll} (Target: {defender_target})"
+        )
         
         # Let's check for any crits first
         if attacker_quality == "critical_success":
             # attacker crit automatically wins ties
-            return True, "critical_success"
+            return True, "critical_success", txt
         elif attacker_quality == "critical_failure":
             # if the attacker fumbles, that's that
-            return False, "critical_failure"
+            return False, "critical_failure", txt
         elif defender_quality == "critical_success":
             # defender scores a critical success and the attacker didn't, they just win, no tiebreakers
-            return False, None
+            return False, None, txt
         elif defender_quality == "critical_failure":
             # if the defender fumbles, and the attacker didn't, attacker wins
-            return True, None
+            return True, None, txt
         
         # At this point, nobody has scored a crit of any kind
         elif attacker_success and not defender_success:
             #attacker succeeds and defender fails, that's easy
-            return True, None
+            return True, None, txt
         elif not attacker_success and defender_success:
             # defender succeeds
-            return False, None
+            return False, None, txt
         elif attacker_success and defender_success:
             # both succeed without critting, lowest roll wins
             # This deviates from OpenQuest, but plays better with advantage/disadvantage
             # attacker wins ties
-            return attacker_roll <= defender_roll, None
+            return attacker_roll <= defender_roll, None, txt
         else: # this means both failed without fumbling, so lowest roll wins
-            return attacker_roll <= defender_roll, None
+            return attacker_roll <= defender_roll, None, txt
     
     def morale_check(self, defender):
         # roll a morale check for a target 

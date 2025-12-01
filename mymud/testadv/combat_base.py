@@ -1,4 +1,6 @@
 from evennia import DefaultScript, create_script
+from evennia.utils import evtable
+from . import rules
 
 
 class CombatFailure(RuntimeError):
@@ -6,6 +8,149 @@ class CombatFailure(RuntimeError):
     If some error happens in combat
     '''
     pass
+
+
+class CombatAction:
+    '''
+    Parent class for all actions.
+    '''
+    def __init__(self, combathandler, combatant, action_dict):
+        self.combathandler = combathandler
+        self.combatant = combatant
+
+        for key, val in action_dict.items():
+            if key.startwith("_"):
+                setattr(self, key, val)
+
+    def msg(self, message, broadcast=True):
+        '''
+        Send message to others in combat.
+        '''
+        self.combathandler.msg(message, combatant=self.combatant, broadcast=broadcast)
+
+    def can_use(self):
+        '''
+        Return false if the combatant cannot currently use this action
+        '''
+        return True
+    
+    def execute(self):
+        '''
+        Does the action.
+        '''
+        pass
+
+    def post_execute(self):
+        '''
+        Called after execute() for cleanup/tallying.
+        '''
+        pass
+
+
+class CombatActionHold(CombatAction):
+    '''
+    The action of no action.
+    :: 
+        action_dict = {
+            "key": "hold"
+        }
+    '''
+
+class CombatActionAttack(CombatAction):
+    '''
+    A regular attack, using a wielded weapon
+    ::
+        action-dict = {
+            "key": "attack",
+            "target": Character/Object
+        }
+    '''
+
+    def execute(self):
+        attacker = self.combatant
+        weapon = attacker.weapon
+        target = self.target
+
+        if weapon.at_pre_use(attacker, target):
+            weapon.use(
+                attacker,
+                target,
+                attacker_advantage=self.combathandler.has_advantage(attacker, target),
+                attacker_disadvantage=self.combathandler.has_disadvantage(attacker, target),
+            )
+            weapon.at_post_use(attacker, target)
+
+
+class CombatActionStunt(CombatAction):
+    '''
+    Perform a stunt the grants a beneficiary (can be self) advantage on their next action against a 
+    target. Whenever performing a stunt that would affect another negatively (giving them
+    disadvantage against an ally, or granting an advantage against them, we need to make a check
+    first. We don't do a check if giving an advantage to an ally or ourselves.
+
+    action_dict = {
+           "key": "stunt",
+           "recipient": Character/NPC,
+           "target": Character/NPC,
+           "advantage": bool,  # if False, it's a disadvantage
+           "stunt_type": Ability,  # what ability (like STR, DEX etc) to use to perform this stunt. 
+           "defense_type": Ability, # what ability to use to defend against (negative) effects of
+            this stunt.
+        }
+    '''
+    def execute(self):
+        combathandler=self.combathandler
+        attacker = self.combatant
+        recipient = self.recipient
+        target = self.target
+        txt = ""
+
+        if recipient == target:
+            # grant another entity dis/advantage against itself
+            defender = recipient
+        else:
+            # Recipient and target are different
+            # who defends determined by if we're giving advantage or disadvantage
+            defender = target if self.advantage else recipient
+
+        # trying to give adv to recipient against target. Target defends against caller.
+        is_success, _, txt = rules.dice.opposed_saving_throw(
+            attacker,
+            defender,
+            attack_type=self.stunt_type,
+            defense_type=self.defense_type,
+            attacker_advantage=combathandler.has_advantage(attacker, defender),
+            attacker_disadvantage=combathandler.has_disadvantage(attacker, defender),
+            defender_advantage=combathandler.has_advantage(defender, attacker),
+            defender_disadvantage=combathandler.has_disadvantage(defender, attacker),
+        )
+
+        self.msg(f"$You() $conj(attempt) stunt on $You({defender.key}). {txt}")
+
+        # deal with the results
+        if is_success:
+            if self.advantage:
+                combathandler.give_advantage(recipient, target)
+            else:
+                combathandler.give_disadvantage(recipient, target)
+            if recipient == self.combatant:
+                self.msg(
+                    f"$You() $conj(gain) {'advantage' if self.advantage else 'disadvantage'} "
+                    f"against $You({target.key})!"
+                )
+            else:
+                self.msg(
+                    f"$You() $conj(cause) $You({recipient.key}) "
+                    f"to gain {'advantage' if self.advantage else 'disadvantage'} "
+                    f"against $You({target.key})!"
+                )
+            self.msg(
+                "|yHaving succeeded, you hold back to plan your next move.|n [hold]",
+                broadcast=False,
+            )
+        else:
+            self.msg(f"$You({defender.key}) $conj(resist)! $You() $conj(fail) the stunt.")
+
 
 
 class TestAdvCombatBaseHandler(DefaultScript):
@@ -80,9 +225,42 @@ class TestAdvCombatBaseHandler(DefaultScript):
         '''
         Gets a nicely formatted 'battle report of combat, from the perspective of the combatant.
         '''
-        pass    # TODO
+        allies, enemies = self.get_sides(combatant)
+        # get the number of allies and enemies
+        nallies, nenemies = len(allies), len(enemies)
 
-        # Implemented differently in twitch/turnbased combat
+        # prepare colors(!) and hurt levels
+        allies = [f"{ally} ({ally.hurt_level})" for ally in allies]
+        enemies = [f"{enemy} ({enemy.hurt_level})" for enemy in enemies]
+
+        # The center column with the 'vs'
+        vs_column = ["" for _ in range(max(nallies, nenemies))]
+        vs_column[len(vs_column) // 2] = "|wvs|n"
+
+        # The two allies/enemies columns should be centered vertically
+        # Here we're figuring out how many blank rows we need, and splitting them up
+        diff = abs(nallies - nenemies)
+        top_empty = diff // 2
+        bot_empty = diff - top_empty
+        topfill = ["" for _ in range(top_empty)]
+        botfill = ["" for _ in range(bot_empty)]
+
+        # Here we determine which side needs the empty filler lines
+        if nallies >= nenemies:
+            enemies = topfill + enemies + botfill
+        else:
+            allies = topfill + allies + botfill
+
+        # Here we actually make the table that prints out
+        return evtable.EvTable(
+            table=[
+                evtable.EvColumn(*allies, align="l"),
+                evtable.EvColumn(*vs_column, align="c"),
+                evtable.EvColumn(*enemies, align="r"),
+            ],
+            border=None,
+            maxwidth=78,
+        )
 
     def get_sides(self, combatant):
         '''
