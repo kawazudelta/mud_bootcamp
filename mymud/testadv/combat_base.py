@@ -19,8 +19,7 @@ class CombatAction:
         self.combatant = combatant
 
         for key, val in action_dict.items():
-            if key.startwith("_"):
-                setattr(self, key, val)
+            setattr(self, key, val)
 
     def msg(self, message, broadcast=True):
         '''
@@ -192,7 +191,7 @@ class TestAdvCombatBaseHandler(DefaultScript):
             obj.ndb.combathandler = combathandler
         return combathandler
 
-    def msg(self, message, combatant=None, broadcast=True, location=True):
+    def msg(self, message, combatant=None, broadcast=True, location=None):
         '''
         Central place for sending messages to combatants. This allows for adding any combat-specific text-decoration in one place.
         
