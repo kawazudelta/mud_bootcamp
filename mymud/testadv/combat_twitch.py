@@ -183,3 +183,99 @@ class TestAdvCombatTwitchHandler(TestAdvCombatBaseHandler):
 
     def stop_combat(self):
         pass # TODO apparently we're saving this for last
+
+
+class _BaseTwitchCombatCommand(Command):
+    '''
+    Parent class for all twitch-combat commands
+    '''
+    def at_pre_command(self):
+        '''
+        Called before parsing.
+        '''
+        if not self.caller.location or not self.caller.location.allow_combat:
+            self.msg("Can't fight here!")
+            raise InterruptCommand()
+        
+    def parse(self):
+        '''
+        Handle parsing of most supported combat syntaxes (except stunts)
+        
+        <action> [<target>|<item>]
+        or
+        <action> <item> [on] <target>
+        
+        Use 'on' to differentiate if names/items have spaces in the name.
+        '''
+        # clean up the input from the player by stripping white space on the ends, 'args' is to save keystrokes
+        self.args = args = self.args.strip()
+        # make empty containers for whatver we're about to parse
+        self.lhs, self.rhs = "", ""
+
+        if not args:
+            return
+        
+        if " on " in args:
+            lhs, rhs = args.split(" on ", 1)
+        else:
+            lhs, *rhs = args.split(None, 1)
+            rhs = " ".join(rhs)
+        self.lhs, self.rhs = lhs.strip(), rhs.strip()
+
+    def get_or_create_combathandler(self, target=None, combathandler_key="combathandler"):
+        '''
+        Get or create the combathandler assigned to this combatant
+        '''
+        if target:
+            # add/check combathandler to the target
+            if target.hp_max is None:
+                self.msg("You can't attack that!")
+                raise InterruptCommand()
+            
+            TestAdvCombatTwitchHandler.get_or_create_combathandler(
+                target, key=combathandler_key
+            )
+        return TestAdvCombatTwitchHandler.get_or_create_combathandler(self.caller)
+    
+
+class CmdLook(default_cmds.CmdLook, _BaseTwitchCombatCommand):
+    def func(self):
+        # get regular look, followed by a combat summary
+        super().func()
+        if not self.args:
+            combathandler = self.get_or_create_combathandler()
+            txt = str(combathandler.get_combat_summary(self.caller))
+            maxwidth = max(display_len(line) for line in txt.strip().split("\n"))
+            self.msg(f"|r{pad(' Combat Status ', width=maxwidth, fillchar='-')}|n\n{txt}")
+
+
+class CmdHold(_BaseTwitchCombatCommand):
+    '''
+    Hold your action, waiting for the next turn.
+    Usage:
+      hold
+    '''
+    key = "hold"
+    
+    def func(self):
+        combathandler = self.get_or_create_combathandler()
+        combathandler.queue_action({"key": "hold"})
+        combathandler.msg("$You() $conj(hold) back, doing nothing.", self.caller)
+
+
+class CmdAttack(_BaseTwitchCombatCommand):
+    '''
+    Attack a target. Will keep attacking the target until
+    combat ends or another combat action is taken.
+
+    Usage:
+        attack/hit <target>
+    '''
+    key = "attack"
+    aliases = ["hit"]
+    help_category = "combat"
+
+    def func(self):
+        target = self.caller.search(self.lhs)
+        if not target:
+            return
