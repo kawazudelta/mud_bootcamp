@@ -36,7 +36,6 @@ class TestDungeon(TestAdvMixin, BaseEvenniaTest):
             location=self.start_room,
             destination=self.start_room,
         )
-        self.start_north
         self.start_south = create_object(
             dungeon.TestAdvDungeonStartRoomExit,
             key="south",

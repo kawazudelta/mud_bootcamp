@@ -132,7 +132,7 @@ def room_generator(dungeon_branch, depth, coords):
     This default one returns the same empty room.
 
     Args:
-        dungeon_branch (EvAdventureDungeonBranch): The current dungeon branch.
+        dungeon_branch (TestAdvDungeonBranch): The current dungeon branch.
         depth (int): The 'depth' of the dungeon (radial distance from start room) this
             new room will be placed at.
         coords (tuple): The `(x,y)` coords that the new room will be created at.
@@ -337,7 +337,6 @@ class TestAdvDungeonStartRoomExit(DefaultExit):
         '''
         if target_location == self.location:
             # make a global branch script for this dungeon branch
-            self.location.room_generator
             dungeon_branch = create.create_script(
                 TestAdvDungeonBranch,
                 key=f"dungeon_branch_{self.key}_{datetime.now(timezone.utc)}",
@@ -362,7 +361,7 @@ class TestAdvDungeonBranchDeleter(DefaultScript):
     branch_max_life = AttributeProperty(0, autocreate=False)
 
     def at_script_creation(self):
-        self.key = "evadventure_dungeon_branch_deleter"
+        self.key = "testadv_dungeon_branch_deleter"
 
     def at_repeat(self):
         '''
@@ -395,6 +394,10 @@ class TestAdvStartRoomResetter(DefaultScript):
                 exi.reset_exit()
 
 
+def _default_room_generator():
+    return room_generator
+
+
 class TestAdvDungeonStartRoom(TestAdvDungeonRoom):
     '''
     The start room is the only permanent part of the dungeon. Exits leading from this room (except
@@ -412,7 +415,7 @@ class TestAdvDungeonStartRoom(TestAdvDungeonRoom):
     branch_max_life = 60 * 60 * 24 * 7  # 1 week
 
     # allow for a custom room_generator function
-    room_generator = AttributeProperty(lambda: room_generator, autocreate=False)
+    room_generator = AttributeProperty(_default_room_generator, autocreate=False)
 
     def get_display_footer(self, looker, **kwargs):
         return (

@@ -17,7 +17,7 @@ from ..objects import (
 from ..rooms import TestAdvRoom
 
 
-class EvAdventureMixin:
+class TestAdvMixin:
     """
     Provides a set of pre-made characters.
 
