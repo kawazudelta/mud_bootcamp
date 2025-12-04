@@ -81,11 +81,11 @@ class TestAdvCombatTwitchHandler(TestAdvCombatBaseHandler):
             npcs = [comb for comb in combatants if comb not in pcs]
             if combatant in pcs:
                 # combatant is a PC, so all NPCs are enemies
-                allies = pcs
+                allies = [pc for pc in pcs if pc != combatant]
                 enemies = npcs
             else:
                 # combatant is an NPC, so all PCs are enemies
-                allies = npcs
+                allies = [npc for npc in npcs if npc != combatant]
                 enemies = pcs
         return allies, enemies
     
@@ -97,7 +97,7 @@ class TestAdvCombatTwitchHandler(TestAdvCombatBaseHandler):
 
     def give_disadvantage(self, recipient, target):
         '''
-        Let's an affected party gain disadvantage against a target.
+        Lets an affected party gain disadvantage against a target.
         '''
         self.disadvantage_against[target] = True
 
@@ -237,7 +237,7 @@ class _BaseTwitchCombatCommand(Command):
         '''
         if target:
             # add/check combathandler to the target
-            if target.hp_max is None:
+            if not getattr(target, "hp_max", None):
                 self.msg("You can't attack that!")
                 raise InterruptCommand()
             
@@ -306,11 +306,11 @@ class CmdStunt(_BaseTwitchCombatCommand):
         foil [ability] <target>        (same as foil <target> me)
 
     Example:
-        boost STR me Goblin
-        boost DEX Goblin
-        foil STR Goblin me
-        foil INT Goblin
-        boost INT Wizard Goblin
+        boost PHYS me Goblin
+        boost COOR Goblin
+        foil PHYS Goblin me
+        foil REAS Goblin
+        boost REAS Wizard Goblin
 
     """
 
@@ -392,6 +392,7 @@ class CmdStunt(_BaseTwitchCombatCommand):
                 "stunt_type": self.stunt_type,
                 "defense_type": self.stunt_type,
                 "dt": 3,
+                "repeat": False,
             },
         )
         combathandler.msg("$You() prepare a stunt!", self.caller)
@@ -438,7 +439,7 @@ class CmdUseItem(_BaseTwitchCombatCommand):
                 return
 
         combathandler = self.get_or_create_combathandler(target)
-        combathandler.queue_action({"key": "use", "item": item, "target": target, "dt": 3})
+        combathandler.queue_action({"key": "use", "item": item, "target": target, "dt": 3, "repeat": False})
         combathandler.msg(
             f"$You() prepare to use {item.get_display_name(self.caller)}!", self.caller
         )
@@ -479,7 +480,7 @@ class CmdWield(_BaseTwitchCombatCommand):
             self.msg("(You must carry the item to wield it.)")
             return
         combathandler = self.get_or_create_combathandler()
-        combathandler.queue_action({"key": "wield", "item": item, "dt": 3})
+        combathandler.queue_action({"key": "wield", "item": item, "dt": 3, "repeat": False})
         combathandler.msg(f"$You() reach for {item.get_display_name(self.caller)}!", self.caller)
 
 

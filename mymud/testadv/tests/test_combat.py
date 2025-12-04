@@ -6,8 +6,11 @@ from unittest.mock import MagicMock, patch
 from evennia import create_object
 from evennia.utils.test_resources import EvenniaTestCase
 from .. import combat_base
+from .. import combat_twitch
 from .. import rules 
 from .. import objects 
+from .. import characters
+from .. import npcs
 
 class TestCombatHandlerBase(EvenniaTestCase):
     """
@@ -152,9 +155,7 @@ class TestCombatActions(EvenniaTestCase):
         action_dict = {
             "key": "stunt",
             "recipient": self.target, # giving target disadvantage
-            "target": self.target, # against themselves? or just generally? 
-                                   # In combat_base: defender = target if advantage else recipient
-                                   # if advantage=False (disadvantage), defender = recipient (target)
+            "target": self.target,
             "advantage": False,
             "stunt_type": rules.Ability.REAS,
             "defense_type": rules.Ability.WILL
@@ -234,3 +235,152 @@ class TestCombatActions(EvenniaTestCase):
         action.execute()
         
         self.attacker.equipment.move.assert_called_with(new_weapon)
+
+
+class TestTwitchCombatHandler(EvenniaTestCase):
+    """
+    Test the Twitch (real-time-ish) combat handler.
+    """
+
+    def setUp(self):
+        super().setUp()
+        self.room = create_object("evennia.objects.objects.DefaultRoom", key="Room")
+        self.char1 = create_object(characters.TestAdvCharacter, key="PC", location=self.room)
+        self.char2 = create_object(npcs.TestAdvNPC, key="NPC", location=self.room)
+        
+        # Ensure HP is set
+        self.char1.hp = 10
+        self.char2.hp = 10
+
+        self.handler = combat_twitch.TestAdvCombatTwitchHandler.get_or_create_combathandler(self.char1)
+        # Ensure handler is saved to DB so AttributeProperties work
+        if not self.handler.id:
+            self.handler.save()
+
+    def test_get_sides_pve(self):
+        """
+        Test get_sides in PvE (PC vs NPC).
+        """
+        # Make sure char2 has a handler too so it's recognized as a combatant
+        combat_twitch.TestAdvCombatTwitchHandler.get_or_create_combathandler(self.char2)
+
+        allies, enemies = self.handler.get_sides(self.char1)
+        
+        # char1 is PC, char2 is NPC. 
+        # In PvE (default), PCs vs NPCs.
+        self.assertIn(self.char2, enemies)
+        self.assertNotIn(self.char1, enemies)
+        self.assertNotIn(self.char1, allies) 
+
+    def test_get_sides_pvp(self):
+        """
+        Test get_sides in PvP.
+        """
+        self.room.allow_pvp = True
+        combat_twitch.TestAdvCombatTwitchHandler.get_or_create_combathandler(self.char2)
+        
+        allies, enemies = self.handler.get_sides(self.char1)
+        
+        # In PvP, everyone else is enemy
+        self.assertIn(self.char2, enemies)
+        self.assertIn(self.char1, allies) # Code says: allies = [combatant]
+
+    def test_advantage_disadvantage(self):
+        """
+        Test tracking of advantage/disadvantage.
+        """
+        self.handler.give_advantage(self.char1, self.char2)
+        self.assertTrue(self.handler.has_advantage(self.char1, self.char2))
+        
+        self.handler.give_disadvantage(self.char1, self.char2)
+        self.assertTrue(self.handler.has_disadvantage(self.char1, self.char2))
+
+    @patch("testadv.combat_twitch.repeat")
+    @patch("testadv.combat_twitch.unrepeat")
+    def test_queue_action(self, mock_unrepeat, mock_repeat):
+        """
+        Test queueing an action.
+        """
+        mock_repeat.return_value = 123
+        
+        action_dict = {"key": "attack", "target": self.char2, "dt": 3}
+        self.handler.queue_action(action_dict)
+        
+        self.assertEqual(self.handler.action_dict, action_dict)
+        self.assertEqual(self.handler.current_ticker_ref, 123)
+        mock_repeat.assert_called_with(3, self.handler.execute_next_action, id_string="combat")
+
+    @patch("testadv.combat_twitch.repeat")
+    @patch("testadv.combat_twitch.unrepeat")
+    def test_execute_next_action(self, mock_unrepeat, mock_repeat):
+        """
+        Test executing the next action.
+        """
+        # Setup action dict
+        self.handler.action_dict = {
+            "key": "attack",
+            "target": self.char2,
+            "dt": 3,
+            "repeat": True
+        }
+        
+        # Mock action class
+        with patch.dict(self.handler.action_classes):
+            mock_action_class = MagicMock()
+            self.handler.action_classes["attack"] = mock_action_class
+            
+            mock_action_instance = mock_action_class.return_value
+            mock_action_instance.can_use.return_value = True
+            
+            # Mock check_stop_combat
+            self.handler.check_stop_combat = MagicMock()
+
+            # Execute
+            self.handler.execute_next_action()
+            
+            # Verify execution
+            mock_action_instance.execute.assert_called()
+            mock_action_instance.post_execute.assert_called()
+            
+            # Since repeat=True, should NOT queue fallback
+            
+    def test_execute_next_action_no_repeat(self):
+        """
+        Test executing a non-repeating action.
+        """
+        self.handler.action_dict = {
+            "key": "stunt",
+            "dt": 3,
+            "repeat": False # Explicitly false
+        }
+        
+        # Mock check_stop_combat to avoid side effects
+        self.handler.check_stop_combat = MagicMock()
+
+        # Mock action class
+        with patch.dict(self.handler.action_classes):
+            mock_action_class = MagicMock()
+            self.handler.action_classes["stunt"] = mock_action_class
+            mock_action_instance = mock_action_class.return_value
+            mock_action_instance.can_use.return_value = True
+
+            self.handler.execute_next_action()
+            
+            # Verify it fell back to hold
+            self.assertEqual(self.handler.action_dict["key"], "hold")
+
+    def test_check_stop_combat(self):
+        """
+        Test stopping combat when enemies are defeated.
+        """
+        # Mock get_sides
+        self.handler.get_sides = MagicMock(return_value=([self.char1], [])) # No enemies
+        
+        # Mock stop_combat
+        self.handler.stop_combat = MagicMock()
+        self.handler.msg = MagicMock()
+        
+        self.handler.check_stop_combat()
+        
+        self.handler.stop_combat.assert_called()
+        self.handler.msg.assert_any_call("None remain who oppose you.")
