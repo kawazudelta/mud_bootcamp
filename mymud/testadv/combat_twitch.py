@@ -49,6 +49,9 @@ class TestAdvCombatTwitchHandler(TestAdvCombatBaseHandler):
         '''
         super().msg(message, combatant=self.obj, broadcast=broadcast, location=self.obj.location)
 
+    def at_init(self):
+        self.obj.cmdset.add(TwitchLookCmdSet, persistent=False)
+
     def get_sides(self, combatant):
         '''
         get a listing of the two sides of combat, from the perspective of the combatant
@@ -182,7 +185,13 @@ class TestAdvCombatTwitchHandler(TestAdvCombatBaseHandler):
             self.stop_combat()
 
     def stop_combat(self):
-        pass # TODO apparently we're saving this for last
+        """
+        Stop combat immediately.
+        """
+        self.queue_action({"key": "hold", "dt": 0})  # make sure ticker is killed
+        del self.obj.ndb.combathandler
+        self.obj.cmdset.remove(TwitchLookCmdSet)
+        self.delete()
 
 
 class _BaseTwitchCombatCommand(Command):
@@ -279,3 +288,222 @@ class CmdAttack(_BaseTwitchCombatCommand):
         target = self.caller.search(self.lhs)
         if not target:
             return
+        
+        combathandler = self.get_or_create_combathandler(target)
+        combathandler.queue_action({"key": "attack", "target": target, "dt": 3, "repeat": True})
+        combathandler.msg(f"$You() $conj(attack) $You({target.key})!", self.caller)
+
+
+class CmdStunt(_BaseTwitchCombatCommand):
+    """
+    Perform a combat stunt, that boosts an ally against a target, or
+    foils an enemy, giving them disadvantage against an ally.
+
+    Usage:
+        boost [ability] <recipient> <target>
+        foil [ability] <recipient> <target>
+        boost [ability] <target>       (same as boost me <target>)
+        foil [ability] <target>        (same as foil <target> me)
+
+    Example:
+        boost STR me Goblin
+        boost DEX Goblin
+        foil STR Goblin me
+        foil INT Goblin
+        boost INT Wizard Goblin
+
+    """
+
+    key = "stunt"
+    aliases = (
+        "boost",
+        "foil",
+    )
+    help_category = "combat"
+
+    def parse(self):
+        args = self.args
+
+        if not args or " " not in args:
+            self.msg("Usage: <ability> <recipient> <target>")
+            raise InterruptCommand()
+
+        advantage = self.cmdname != "foil"
+
+        # extract data from the input
+
+        stunt_type, recipient, target = None, None, None
+
+        stunt_type, *args = args.split(None, 1)
+        if stunt_type:
+            stunt_type = stunt_type.strip().lower()
+
+        args = args[0] if args else ""
+
+        recipient, *args = args.split(None, 1)
+        target = args[0] if args else None
+
+        # validate input and try to guess if not given
+
+        # ability is requried
+        if not stunt_type or stunt_type not in ABILITY_REVERSE_MAP:
+            self.msg(
+                f"'{stunt_type}' is not a valid ability. Pick one of"
+                f" {', '.join(ABILITY_REVERSE_MAP.keys())}."
+            )
+            raise InterruptCommand()
+
+        if not recipient:
+            self.msg("Must give at least a recipient or target.")
+            raise InterruptCommand()
+
+        if not target:
+            # something like `boost str target`
+            target = recipient if advantage else "me"
+            recipient = "me" if advantage else recipient
+
+        # if we still have None:s at this point, we can't continue
+        if None in (stunt_type, recipient, target):
+            self.msg("Both ability, recipient and  target of stunt must be given.")
+            raise InterruptCommand()
+
+        # save what we found so it can be accessed from func()
+        self.advantage = advantage
+        self.stunt_type = ABILITY_REVERSE_MAP[stunt_type]
+        self.recipient = recipient.strip()
+        self.target = target.strip()
+
+    def func(self):
+        target = self.caller.search(self.target)
+        if not target:
+            return
+        recipient = self.caller.search(self.recipient)
+        if not recipient:
+            return
+
+        combathandler = self.get_or_create_combathandler(target)
+
+        combathandler.queue_action(
+            {
+                "key": "stunt",
+                "recipient": recipient,
+                "target": target,
+                "advantage": self.advantage,
+                "stunt_type": self.stunt_type,
+                "defense_type": self.stunt_type,
+                "dt": 3,
+            },
+        )
+        combathandler.msg("$You() prepare a stunt!", self.caller)
+
+
+class CmdUseItem(_BaseTwitchCombatCommand):
+    """
+    Use an item in combat. The item must be in your inventory to use.
+
+    Usage:
+        use <item>
+        use <item> [on] <target>
+
+    Examples:
+        use potion
+        use throwing knife on goblin
+        use bomb goblin
+
+    """
+
+    key = "use"
+    help_category = "combat"
+
+    def parse(self):
+        super().parse()
+
+        if not self.args:
+            self.msg("What do you want to use?")
+            raise InterruptCommand()
+
+        self.item = self.lhs
+        self.target = self.rhs or "me"
+
+    def func(self):
+        item = self.caller.search(
+            self.item, candidates=self.caller.equipment.get_usable_objects_from_backpack()
+        )
+        if not item:
+            self.msg("(You must carry the item to use it.)")
+            return
+        if self.target:
+            target = self.caller.search(self.target)
+            if not target:
+                return
+
+        combathandler = self.get_or_create_combathandler(target)
+        combathandler.queue_action({"key": "use", "item": item, "target": target, "dt": 3})
+        combathandler.msg(
+            f"$You() prepare to use {item.get_display_name(self.caller)}!", self.caller
+        )
+
+
+class CmdWield(_BaseTwitchCombatCommand):
+    """
+    Wield a weapon or spell-rune. You will the wield the item, swapping with any other item(s) you
+    were wielded before.
+
+    Usage:
+      wield <weapon or spell>
+
+    Examples:
+      wield sword
+      wield shield
+      wield fireball
+
+    Note that wielding a shield will not replace the sword in your hand, while wielding a two-handed
+    weapon (or a spell-rune) will take two hands and swap out what you were carrying.
+
+    """
+
+    key = "wield"
+    help_category = "combat"
+
+    def parse(self):
+        if not self.args:
+            self.msg("What do you want to wield?")
+            raise InterruptCommand()
+        super().parse()
+
+    def func(self):
+        item = self.caller.search(
+            self.args, candidates=self.caller.equipment.get_wieldable_objects_from_backpack()
+        )
+        if not item:
+            self.msg("(You must carry the item to wield it.)")
+            return
+        combathandler = self.get_or_create_combathandler()
+        combathandler.queue_action({"key": "wield", "item": item, "dt": 3})
+        combathandler.msg(f"$You() reach for {item.get_display_name(self.caller)}!", self.caller)
+
+
+class TwitchCombatCmdSet(CmdSet):
+    """
+    Add to character, to be able to attack others in a twitch-style way.
+    """
+
+    key = "twitch_combat_cmdset"
+
+    def at_cmdset_creation(self):
+        self.add(CmdAttack())
+        self.add(CmdHold())
+        self.add(CmdStunt())
+        self.add(CmdUseItem())
+        self.add(CmdWield())
+
+
+class TwitchLookCmdSet(CmdSet):
+    """
+    This will be added/removed dynamically when in combat.
+    """
+
+    key = "twitch_look_cmdset"
+
+    def at_cmdset_creation(self):
+        self.add(CmdLook())
