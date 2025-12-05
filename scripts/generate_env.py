@@ -3,7 +3,7 @@ import string
 
 def generate_secret_key(length=50):
     """Generates a secure random string for DJANGO_SECRET_KEY."""
-    chars = string.ascii_letters + string.digits + "!@#$%^&*(-_=+")"
+    chars = string.ascii_letters + string.digits + "!@#$%^&*-_=+"
     return ''.join(secrets.choice(chars) for i in range(length))
 
 def generate_db_password(length=20):
