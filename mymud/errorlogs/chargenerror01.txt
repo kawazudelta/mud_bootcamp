@@ -1,0 +1,59 @@
+Error in menu node 'node_accept_chargen'.
+Traceback (most recent call last):
+  File "C:\Users\sedqo\Desktop\mud_bootcamp\.venv\Lib\site-packages\evennia\commands\cmdhandler.py", line 751, in cmdhandler
+    raise ExecSystemCommand(syscmd, sysarg)
+evennia.commands.cmdhandler.ExecSystemCommand: (<evennia.utils.evmenu.CmdEvMenuNode object at 0x000001B7186B7980>, '2')
+
+During handling of the above exception, another exception occurred:
+
+Traceback (most recent call last):
+  File "C:\Users\sedqo\Desktop\mud_bootcamp\.venv\Lib\site-packages\evennia\commands\cmdhandler.py", line 630, in _run_command
+    ret = cmd.func()
+          ^^^^^^^^^^
+  File "C:\Users\sedqo\Desktop\mud_bootcamp\.venv\Lib\site-packages\evennia\utils\evmenu.py", line 450, in func
+    menu.parse_input(self.raw_string)
+  File "C:\Users\sedqo\Desktop\mud_bootcamp\.venv\Lib\site-packages\evennia\utils\evmenu.py", line 1114, in parse_input
+    self.goto(goto_node, raw_string, **(goto_kwargs or {}))
+  File "C:\Users\sedqo\Desktop\mud_bootcamp\.venv\Lib\site-packages\evennia\utils\evmenu.py", line 920, in goto
+    nodetext, options = self._execute_node(nodename, raw_string, **kwargs)
+                        ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "C:\Users\sedqo\Desktop\mud_bootcamp\.venv\Lib\site-packages\evennia\utils\evmenu.py", line 831, in _execute_node
+    ret = self._safe_call(node, raw_string, **kwargs)
+          ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "C:\Users\sedqo\Desktop\mud_bootcamp\.venv\Lib\site-packages\evennia\utils\evmenu.py", line 789, in _safe_call
+    ret = callback(self.caller, raw_string, **kwargs)
+          ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "C:\Users\sedqo\Desktop\mud_bootcamp\mymud\testadv\chargen.py", line 278, in node_apply_character
+    new_character = tmp_character.apply()
+                    ^^^^^^^^^^^^^^^^^^^^^
+  File "C:\Users\sedqo\Desktop\mud_bootcamp\mymud\testadv\chargen.py", line 120, in apply
+    new_character = create_object(
+                    ^^^^^^^^^^^^^^
+  File "C:\Users\sedqo\Desktop\mud_bootcamp\.venv\Lib\site-packages\evennia\utils\create.py", line 117, in create_object
+    return ObjectDB.objects.create_object(*args, **kwargs)
+           ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+TypeError: ObjectDBManager.create_object() got an unexpected keyword argument 'attrs'
+
+An untrapped error occurred.
+(Traceback was logged 25-12-05 03:44:08-05).
+Traceback (most recent call last):
+  File "C:\Users\sedqo\Desktop\mud_bootcamp\.venv\Lib\site-packages\evennia\commands\cmdhandler.py", line 751, in cmdhandler
+    raise ExecSystemCommand(syscmd, sysarg)
+evennia.commands.cmdhandler.ExecSystemCommand: (<evennia.utils.evmenu.CmdEvMenuNode object at 0x000001B7186B7980>, '2')
+
+During handling of the above exception, another exception occurred:
+
+Traceback (most recent call last):
+  File "C:\Users\sedqo\Desktop\mud_bootcamp\.venv\Lib\site-packages\evennia\commands\cmdhandler.py", line 774, in cmdhandler
+    yield _run_command(
+  File "C:\Users\sedqo\Desktop\mud_bootcamp\.venv\Lib\site-packages\twisted\internet\defer.py", line 2017, in _inlineCallbacks
+    result = context.run(gen.send, result)
+             ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "C:\Users\sedqo\Desktop\mud_bootcamp\.venv\Lib\site-packages\evennia\commands\cmdhandler.py", line 655, in _run_command
+    raise ErrorReported(raw_string)
+evennia.commands.cmdhandler.ErrorReported: 2
+
+A command handler bug occurred. If this is not due to a local change,
+please file a bug report with the Evennia project, including the
+traceback and steps to reproduce.
+(Traceback was logged 25-12-05 03:44:08-05).

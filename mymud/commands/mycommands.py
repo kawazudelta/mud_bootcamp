@@ -63,8 +63,25 @@ class MyCmdGet(default_cmds.CmdGet):
         super().func()
         self.caller.msg(str(self.caller.location.contents))
 
+
+class CmdCharCreate(Command):
+    """
+    Start the character generation process.
+
+    Usage:
+        charcreate
+    """
+    key = "charcreate"
+    aliases = ["@charcreate"]
+
+    def func(self):
+        from testadv.chargen import start_chargen
+        start_chargen(self.caller, self.session)
+
+
 class MyCmdSet(CmdSet):
 
     def at_cmdset_creation(self):
         self.add(CmdEcho)
         self.add(CmdHit)
+        self.add(CmdCharCreate)

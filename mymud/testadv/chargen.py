@@ -120,7 +120,7 @@ class TemporaryCharacterSheet:
         new_character = create_object(
             TestAdvCharacter,
             key=self.name,
-            attrs=(
+            attributes=(
                 ("physique", self.physique),
                 ("coordination", self.coordination),
                 ("instinct", self.instinct),
@@ -134,22 +134,28 @@ class TemporaryCharacterSheet:
         )
 
         # spawn random starting equipment (will require prototypes before it works)
-        if self.weapon:
-            weapon = spawn(self.weapon)
-            new_character.equipment.move(weapon)
-        if self.shield:
-            shield = spawn(self.shield)
-            new_character.equipment.move(shield)
-        if self.helmet:
-            helmet = spawn(self.helmet)
-            new_character.equipment.move(helmet)
-        if self.armor:
-            armor = spawn(self.armor)
-            new_character.equipment.move(armor)
+        # if self.weapon:
+        #     weapon = spawn(self.weapon)
+        #     # spawn returns a list!
+        #     if weapon:
+        #          new_character.equipment.move(weapon[0])
+        # if self.shield:
+        #     shield = spawn(self.shield)
+        #     if shield:
+        #          new_character.equipment.move(shield[0])
+        # if self.helmet:
+        #     helmet = spawn(self.helmet)
+        #     if helmet:
+        #          new_character.equipment.move(helmet[0])
+        # if self.armor:
+        #     armor = spawn(self.armor)
+        #     if armor:
+        #          new_character.equipment.move(armor[0])
         
-        for item in self.backpack:
-            item = spawn(item)
-            new_character.equipment.add(item)
+        # for item in self.backpack:
+        #     item = spawn(item)
+        #     if item:
+        #          new_character.equipment.add(item[0])
         
         return new_character
     
@@ -179,7 +185,7 @@ def node_chargen(caller, raw_string, **kwargs):
     options.append(
         {
             "desc": "Accept and create character",
-            "goto": ("node_accept_chargen", kwargs),
+            "goto": ("node_apply_character", kwargs),
         }
     )
 
@@ -277,9 +283,13 @@ def node_apply_character(caller, raw_string, **kwargs):
     tmp_character = kwargs["tmp_character"]
     new_character = tmp_character.apply()
 
-    caller.account.characters.add(new_character)
+    # Link to account
+    caller.characters.add(new_character)
+    
+    # Add puppet lock so the account can control it
+    new_character.locks.add(f"puppet:id({caller.id}) or pid({caller.id}) or perm(Developer) or pperm(Developer)")
 
-    text = "Character created!"
+    text = f"Character '{new_character.key}' created! Use @ic {new_character.key} to enter the game."
 
     # returning None instead of options means we exit the menu
     return text, None
@@ -294,7 +304,7 @@ def start_chargen(caller, session=None):
         "node_chargen": node_chargen,
         "node_name_change": node_name_change,
         "node_swap_abilities": node_swap_abilities,
-        "node_accept_chargen": node_apply_character,
+        "node_apply_character": node_apply_character,
     } 
 
     # this generates all random components of the character
