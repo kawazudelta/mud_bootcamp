@@ -1,0 +1,40 @@
+name: CI/CD
+
+on:
+  push:
+    branches: [ "deploy" ]
+
+jobs:
+  test:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v3
+      - name: Set up Python 3.12
+        uses: actions/setup-python@v4
+        with:
+          python-version: "3.12"
+      - name: Install Dependencies
+        run: |
+          pip install --upgrade pip
+          pip install -r requirements.prod.txt
+      - name: Syntax Check
+        run: |
+          python -m compileall mymud/
+
+  deploy:
+    needs: test
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v3
+      
+      - name: Execute Deployment on Lightsail
+        uses: appleboy/ssh-action@v0.1.8
+        with:
+          host: ${{ secrets.LIGHTSAIL_HOST }}
+          username: ${{ secrets.LIGHTSAIL_USERNAME }}
+          key: ${{ secrets.LIGHTSAIL_SSH_KEY }}
+          script_stop: true
+          # We simply execute the script we added to the repo
+          script: |
+            chmod +x ~/mud_bootcamp/scripts/deploy.sh
+            ~/mud_bootcamp/scripts/deploy.sh
