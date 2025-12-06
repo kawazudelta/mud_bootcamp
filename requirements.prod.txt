@@ -1,0 +1,18 @@
+# Production Requirements
+# Usage: pip install -r requirements.prod.txt
+
+# Core Evennia (Pins to the latest stable version if not specified, but good to pin for prod)
+evennia>=1.0
+
+# Database Driver for PostgreSQL
+psycopg2-binary
+
+# SSL/TLS Security for Twisted (Critical for secure MUD traffic)
+service_identity
+
+# Project Dependencies (Copied from requirements.txt)
+certifi==2025.10.5
+charset-normalizer==3.4.4
+idna==3.11
+requests==2.32.5
+urllib3==2.5.0
