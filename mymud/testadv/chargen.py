@@ -133,29 +133,34 @@ class TemporaryCharacterSheet:
             ),
         )
 
-        # spawn random starting equipment (will require prototypes before it works)
-        # if self.weapon:
-        #     weapon = spawn(self.weapon)
-        #     # spawn returns a list!
-        #     if weapon:
-        #          new_character.equipment.move(weapon[0])
-        # if self.shield:
-        #     shield = spawn(self.shield)
-        #     if shield:
-        #          new_character.equipment.move(shield[0])
-        # if self.helmet:
-        #     helmet = spawn(self.helmet)
-        #     if helmet:
-        #          new_character.equipment.move(helmet[0])
-        # if self.armor:
-        #     armor = spawn(self.armor)
-        #     if armor:
-        #          new_character.equipment.move(armor[0])
+        # spawn random starting equipment
+        if self.weapon:
+            weapon = spawn(self.weapon)
+            if weapon:
+                 new_character.equipment.move(weapon[0])
         
-        # for item in self.backpack:
-        #     item = spawn(item)
-        #     if item:
-        #          new_character.equipment.add(item[0])
+        if self.shield and self.shield != "none":
+            shield = spawn(self.shield)
+            if shield:
+                 new_character.equipment.move(shield[0])
+
+        if self.helmet and self.helmet != "none":
+            helmet = spawn(self.helmet)
+            if helmet:
+                 new_character.equipment.move(helmet[0])
+
+        if self.armor and "no" not in self.armor:
+            armor = spawn(self.armor)
+            if armor:
+                 new_character.equipment.move(armor[0])
+        
+        for item in self.backpack:
+            # these items are just in the backpack
+            item_obj = spawn(item)
+            if item_obj:
+                 # moving to the character will automatically add to backpack
+                 # via the at_object_receive hook
+                 item_obj[0].move_to(new_character, quiet=True)
         
         return new_character
     
@@ -289,7 +294,13 @@ def node_apply_character(caller, raw_string, **kwargs):
     # Add puppet lock so the account can control it
     new_character.locks.add(f"puppet:id({caller.id}) or pid({caller.id}) or perm(Developer) or pperm(Developer)")
 
-    text = f"Character '{new_character.key}' created! Use @ic {new_character.key} to enter the game."
+    # Auto-puppet the character
+    # We try to get the session from the caller (Account)
+    session = caller.sessions.get()[0] if caller.sessions.count() else None
+    if session:
+        caller.puppet_object(session, new_character)
+
+    text = f"Character '{new_character.key}' created! You are now entering the game."
 
     # returning None instead of options means we exit the menu
     return text, None
