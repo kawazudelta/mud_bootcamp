@@ -41,6 +41,7 @@ class CharacterCmdSet(default_cmds.CharacterCmdSet):
         self.add(mycommands.CmdEcho)
         self.add(mycommands.CmdHit)
         self.add(mycommands.MyCmdGet)
+        self.add(mycommands.CmdLook)
         self.add(CmdQuickFind())
         #self.add(sittables.CmdNoSitStand)
         self.add(sittables.CmdSit2)

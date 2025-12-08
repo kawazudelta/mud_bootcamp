@@ -144,6 +144,49 @@ class CmdHit(Command):
         target.msg(f"You got hit by {self.caller.key} with {weaponstr}!")
 
 
+class CmdLook(default_cmds.CmdLook):
+    """
+    look at location or object
+
+    Usage:
+      look
+      look <obj>
+      look *<account>
+
+    Observes your location or objects in your vicinity.
+    """
+    
+    def func(self):
+        """
+        Handle the looking.
+        """
+        caller = self.caller
+        if not self.args:
+            target = caller.location
+            if not target:
+                caller.msg("You have no location to look at!")
+                return
+        else:
+            # Custom search to include equipment
+            candidates = []
+            if caller.location:
+                candidates.extend(caller.location.contents)
+            candidates.extend(caller.contents)
+            
+            if hasattr(caller, "equipment"):
+                 # add all equipped items
+                 equip_items = [item for item, slot in caller.equipment.all() if item]
+                 # Use set to avoid duplicates if items are in both lists
+                 candidates = list(set(candidates + equip_items))
+            
+            target = caller.search(self.args, candidates=candidates)
+            
+        if not target:
+            return
+            
+        self.msg(caller.at_look(target))
+
+
 class MyCmdGet(default_cmds.CmdGet):
 
     def func(self):
