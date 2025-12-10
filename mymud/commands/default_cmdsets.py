@@ -49,6 +49,8 @@ class CharacterCmdSet(default_cmds.CharacterCmdSet):
         self.add(mycommands.CmdEquip)
         self.add(mycommands.CmdInventory)
         self.add(mycommands.CmdTestLoot)
+        self.add(mycommands.CmdWield)
+        self.add(mycommands.CmdRemove)
 
 
 class AccountCmdSet(default_cmds.AccountCmdSet):

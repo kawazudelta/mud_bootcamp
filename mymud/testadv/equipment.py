@@ -1,7 +1,7 @@
 from evennia.utils.utils import inherits_from
 
 from .enums import WieldLocation, Ability
-from .objects import TestAdvObject, WeaponBareHands
+from .objects import TestAdvObject, WeaponBareHands, get_bare_hands
 
 class EquipmentError(TypeError):
     '''
@@ -81,6 +81,13 @@ class EquipmentHandler:
         size = obj.size
         max_slots = self.max_slots
         current_slot_usage = self.count_slots()
+        
+        # If the object is already in our inventory (backpack or worn),
+        # we shouldn't count it against the total for validation purposes
+        # (e.g. when moving from backpack to hand)
+        if obj in self.all_objects():
+             current_slot_usage -= size
+
         return current_slot_usage + size <= max_slots
     
     def add(self, obj):
@@ -129,10 +136,13 @@ class EquipmentHandler:
         '''
         Move object from backpack to its intended use slot
         '''
-        #make sure to remove from equipment/backpack first to avoid double adding
-        self.remove(obj)
+        # Check validation BEFORE removing. 
+        # Since we updated validate_slot_usage to handle existing objects, this is safe.
         if not self.validate_slot_usage(obj):
-            return
+            return False
+
+        # Now safe to remove
+        self.remove(obj)
         
         slots = self.slots
         use_slot = getattr(obj, "inventory_use_slot", WieldLocation.BACKPACK)
@@ -164,6 +174,14 @@ class EquipmentHandler:
         
         # save the new equipment state
         self._save()
+        return True
+
+    def all_objects(self):
+        '''
+        Helper to return just a flat list of all objects, for checking existence
+        '''
+        # self.all() returns tuples (obj, slot), we just want objs
+        return [item[0] for item in self.all() if item[0]]
 
     def all(self):
         '''
@@ -203,6 +221,6 @@ class EquipmentHandler:
             weapon = slots[WieldLocation.WEAPON_HAND]
         # if there's still no weapon, we throw hands
         if not weapon:
-            weapon = WeaponBareHands.get_bare_hands()
+            weapon = get_bare_hands()
         return weapon
     

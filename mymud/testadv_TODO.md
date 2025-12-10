@@ -2,7 +2,7 @@
 
 ## High Priority
 
-* [ ] **Implement Wear/Wield/Remove Commands:** Users need commands to move items between inventory and equipment slots (utilizing the EquipmentHandler).
+* [x] **Implement Wear/Wield/Remove Commands:** Users need commands to move items between inventory and equipment slots (utilizing the EquipmentHandler).
 * [x] **Fix Room Item Display:** Items spawned in a room are not appearing in the room description/content list.
 * [x] **Fix `look <item>` Traceback:** Looking at specific spawned items (e.g., "mining pick") causes a traceback.
 

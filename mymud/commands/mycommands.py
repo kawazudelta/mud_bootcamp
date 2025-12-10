@@ -237,6 +237,104 @@ class CmdTestLoot(default_cmds.MuxCommand):
             self.caller.msg(f"Could not spawn loot from table '{table_name}'.")
 
 
+class CmdWield(default_cmds.MuxCommand):
+    """
+    Wield or wear an item.
+
+    Usage:
+      wield <obj>
+      wear <obj>
+
+    Equips an item from your backpack into its proper slot.
+    """
+    key = "wield"
+    aliases = ["wear"]
+    locks = "cmd:all()"
+
+    def func(self):
+        caller = self.caller
+        if not self.args:
+            caller.msg("Wield what?")
+            return
+        
+        if not hasattr(caller, "equipment"):
+            caller.msg("You can't wield anything.")
+            return
+
+        # Find the item. Standard search finds things in inventory/backpack.
+        obj = caller.search(self.args)
+        if not obj:
+            return
+        
+        # Try to move it to its slot
+        # We assume move() returns True on success, False on failure (as we updated it)
+        if caller.equipment.move(obj):
+            caller.msg(f"You equip {obj.get_display_name(caller)}.")
+        else:
+            caller.msg("You can't equip that.")
+
+
+class CmdRemove(default_cmds.MuxCommand):
+    """
+    Remove an equipped item.
+
+    Usage:
+      remove <obj>
+      unequip <obj>
+      unwield <obj>
+
+    Takes an item from a worn slot and places it in your backpack.
+    """
+    key = "remove"
+    aliases = ["unequip", "unwield"]
+    locks = "cmd:all()"
+
+    def func(self):
+        caller = self.caller
+        if not self.args:
+            caller.msg("Remove what?")
+            return
+        
+        if not hasattr(caller, "equipment"):
+            caller.msg("You have nothing to remove.")
+            return
+
+        # Custom search for EQUIPPED items only
+        # We don't want to find things in the room or backpack
+        equip_items = [item for item, slot in caller.equipment.all() if item and slot != WieldLocation.BACKPACK]
+        
+        # Use quiet search to get a list of matches
+        matches = caller.search(self.args, candidates=equip_items, quiet=True)
+        
+        if not matches:
+            caller.msg("You don't have that equipped.")
+            return
+        
+        # If multiple matches, we handle it simply for now (pick first)
+        # or we could ask for clarification.
+        if len(matches) > 1:
+             # If exact match exists in the list, prefer it
+             # This mimics standard Evennia logic loosely
+             exact_matches = [m for m in matches if m.key.lower() == self.args.lower()]
+             if exact_matches:
+                 obj = exact_matches[0]
+             else:
+                 caller.msg("Multiple items found. Please be more specific.")
+                 return
+        else:
+            obj = matches[0]
+        
+        # Perform the move: Remove from slot, Add to backpack
+        # remove() returns a list of removed objects
+        removed_objs = caller.equipment.remove(obj)
+        if obj in removed_objs:
+            # Successfully removed, now put in backpack
+            caller.equipment.add(obj)
+            caller.msg(f"You unequip {obj.get_display_name(caller)}.")
+        else:
+            caller.msg("Could not remove the item.")
+
+
 class MyCmdSet(CmdSet):
 
     def at_cmdset_creation(self):
@@ -244,3 +342,5 @@ class MyCmdSet(CmdSet):
         self.add(CmdHit)
         self.add(CmdCharCreate)
         self.add(CmdTestLoot)
+        self.add(CmdWield)
+        self.add(CmdRemove)

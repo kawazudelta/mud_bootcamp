@@ -8,6 +8,13 @@
     - **Look Command Crash:** Fixed a traceback when looking at items (e.g., "mining pick", "crowbar"). The issue was caused by the item's description method (`get_obj_stats`) assuming the looker always had an `equipment` handler. Added a safety check to `testadv/utils.py` to prevent crashes when viewed by non-standard characters (like the superuser).
     - **Loot Spawning Location:** Fixed an issue where `testloot` spawned items in "Null space" (Location: None) instead of the caller's room. Refactored `testadv/loot_tables.py` to pass a dictionary with `{"prototype_parent": key, "location": loc}` to `spawn()`, which resolved the location assignment failure.
     - **Testloot Persistence:** Added `CmdTestLoot` to `CharacterCmdSet` in `commands/default_cmdsets.py` so the command persists across server reloads.
+- **Equipment & Interaction:**
+    - **Wield/Wear & Remove Commands:** Implemented `CmdWield` (alias: `wear`) and `CmdRemove` (alias: `unequip`, `unwield`) in `commands/mycommands.py`. These integrate directly with the `EquipmentHandler` to move items between backpack and slots.
+    - **Robust Equipment Logic:** Patched `testadv/equipment.py` to ensure `move` operations don't delete items if validation fails, and fixed import issues with `get_bare_hands`.
+    - **Look Command Polish:** Refactored `CmdLook` to use a safer "hybrid" approach. It now attempts to find equipped items first; if none are found, it delegates to the standard `super().func()`, preserving default functionality (looking at rooms, accounts, etc.).
+- **Random Loot System:**
+    - **Loot Tables:** Created a master `loot` table in `testadv/random_tables.py` aggregating all gear types.
+    - **Flexibility:** Updated `CmdTestLoot` to default to the `loot` table if no argument is provided, simplifying testing.
 
 ## 2025-12-09
 
