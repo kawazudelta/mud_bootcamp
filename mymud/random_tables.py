@@ -4,10 +4,9 @@ Random tables - adopted from _Knave_.
 """
 
 # Character generation tables
-# we just straight up copied this
 
 chargen_tables = {
-    "body type": [
+    "physique": [
         "athletic",
         "brawny",
         "corpulent",
@@ -554,13 +553,53 @@ chargen_tables = {
         "Dione",
         "Jiles",
         "Kaylein",
+        "Warin",
+        "Thea",
+        "Domeka",
+        "Dorothea",
+        "Joffridus",
+        "Kinna",
+        "Waverly",
+        "Trillby",
+        "Donald",
+        "Douce",
+        "Jordan",
+        "Krea",
         "Willahelm",
+        "Wendel",
+        "Doran",
+        "Duraina",
+        "Joris",
+        "Kypris",
+        "William",
+        "Wilberga",
+        "Dumphey",
+        "Dyota",
+        "Josef",
+        "Landerra",
         "Wimarc",
+        "Winifred",
+        "Eadmund",
+        "Eberhild",
+        "Laurence",
+        "Larraza",
         "Wystan",
+        "Wofled",
+        "Eckardus",
+        "Edelot",
+        "Leofrick",
+        "Linet",
         "Xalvador",
+        "Wymarc",
+        "Edward",
+        "Edyva",
+        "Letholdus",
+        "Loreena",
         "Zane",
+        "Ysmay",
     ],
 }
+
 
 reactions = [
     ("2", "Hostile"),
@@ -575,25 +614,14 @@ initiative = [
     ("4-6", "PC acts first"),
 ]
 
-# Would need new at_death() call to use this, so it's greened out for now
-# death_and_dismemberment = [
-#     "dead",
-#     "dead",  # original says 'dismemberment' here, we don't simulate this
-#     "weakened",  # -1d4 STR
-#     "unsteady",  # -1d4 DEX
-#     "sickly",  # -1d4 CON
-#     "addled",  # -1d4 INT
-#     "rattled",  # -1d4 WIS
-#     "disfigured",  # -1d4 CHA
-# ]
 
-
-# --- Loot Tables ---
-
-loot_tables = {
-    "loot": (
-        chargen_tables["dungeoning gear"] +
-        chargen_tables["general gear 1"] +
-        chargen_tables["general gear 2"]
-    )
-}
+death_and_dismemberment = [
+    "dead",
+    "dead",  # original says 'dismemberment' here, we don't simulate this
+    "weakened",  # -1d4 STR
+    "unsteady",  # -1d4 DEX
+    "sickly",  # -1d4 CON
+    "addled",  # -1d4 INT
+    "rattled",  # -1d4 WIS
+    "disfigured",  # -1d4 CHA
+]
