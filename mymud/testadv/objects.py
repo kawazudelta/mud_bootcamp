@@ -13,7 +13,7 @@ class TestAdvObject(DefaultObject):
     # default values
     inventory_use_slot = WieldLocation.BACKPACK
     size = AttributeProperty(1, autocreate=False)
-    value = AttributeProperty(0, autocreate=False)
+    value = AttributeProperty(1, autocreate=False)
     
     # this can be either a single type or a list of types (for objects able to be 
     # act as multiple). This is used to tag this object during creation.

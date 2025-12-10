@@ -25,7 +25,17 @@ def get_obj_stats(obj, owner = None):
     '''
     carried = ""
     if owner and hasattr(owner, "equipment"):
-        objmap = dict(owner.equipment.all())
+        # Filter out unsaved/invalid objects that might cause hash errors
+        # None is fine (hashable), but unsaved Models are not.
+        valid_equipment = []
+        for item, slot in owner.equipment.all():
+            if item is None:
+                continue # We don't need None entries for the lookup map anyway
+            if hasattr(item, "pk") and item.pk is None:
+                continue # Skip unsaved objects
+            valid_equipment.append((item, slot))
+
+        objmap = dict(valid_equipment)
         carried = objmap.get(obj)
         carried = f", Worn: [{carried.value}]" if carried else ""
 
