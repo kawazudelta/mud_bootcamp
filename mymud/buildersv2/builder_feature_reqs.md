@@ -5,6 +5,45 @@
 
 ---
 
+## Dependency Assessment & Implementation Roadmap
+
+Based on technical analysis, the implementation order is prioritized to handle dependencies first (e.g., you can't have a vendor without currency, or loot chests without a loot table).
+
+### Phase 1: Core Systems (The Backbone)
+1.  **Random Loot Tables** (Fargo)
+    *   *Dependency:* None.
+    *   *Why:* Backend system needed by Containers (Loot Chests) and potentially Breakables.
+2.  **Economy & Value Attributes** (Edinburgh - Component of Vendor System)
+    *   *Dependency:* None.
+    *   *Action:* Add `db.gold` to Characters and `value` field to Object Prototypes.
+    *   *Why:* Prerequisite for the Vendor System.
+
+### Phase 2: Interactive Objects (The Verbs)
+3.  **Readable Objects** (Gundvagen)
+    *   *Dependency:* None.
+    *   *Why:* Base class for "Things with Text"; Prerequisite for Lore Tag integration.
+4.  **Containers** (Byblos)
+    *   *Dependency:* None (Logic-wise).
+    *   *Why:* Essential for inventory management before item count grows too high.
+5.  **Breakable Props** (Fargo)
+    *   *Dependency:* Optional link to Loot Tables.
+
+### Phase 3: Advanced Logic (The Gameplay)
+6.  **Lore Tag System** (Adelaide)
+    *   *Dependency:* Readable Objects (for the "Reading grants Lore" feature).
+7.  **Simple Vendor System** (Edinburgh)
+    *   *Dependency:* Economy Basics.
+8.  **Triggers & Receivers** (Dalian)
+    *   *Dependency:* None.
+
+### Phase 4: Atmosphere & Exploration (The Polish)
+9.  **Atmosphere Scripts** (Gundvagen)
+    *   *Dependency:* None.
+10. **Variable Exits** (Cordoba)
+    *   *Dependency:* None.
+
+---
+
 ## Feature: Readable Objects (Inscribed Matter)
 
 **Requestor:** Gundvagen
