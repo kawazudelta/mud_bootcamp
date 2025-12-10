@@ -14,7 +14,10 @@ def get_random_loot_prototype(table_name):
         str: The prototype key (e.g., "rope, 50ft") or None if table not found.
     '''
     # Access the dictionary in random_tables
-    table = random_tables.chargen_tables.get(table_name)
+    # Check loot_tables first, then chargen_tables
+    table = getattr(random_tables, "loot_tables", {}).get(table_name)
+    if not table:
+        table = random_tables.chargen_tables.get(table_name)
 
     if not table:
         return None

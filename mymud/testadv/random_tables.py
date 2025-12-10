@@ -554,50 +554,11 @@ chargen_tables = {
         "Dione",
         "Jiles",
         "Kaylein",
-        "Warin",
-        "Thea",
-        "Domeka",
-        "Dorothea",
-        "Joffridus",
-        "Kinna",
-        "Waverly",
-        "Trillby",
-        "Donald",
-        "Douce",
-        "Jordan",
-        "Krea",
         "Willahelm",
-        "Wendel",
-        "Doran",
-        "Duraina",
-        "Joris",
-        "Kypris",
-        "William",
-        "Wilberga",
-        "Dumphey",
-        "Dyota",
-        "Josef",
-        "Landerra",
         "Wimarc",
-        "Winifred",
-        "Eadmund",
-        "Eberhild",
-        "Laurence",
-        "Larraza",
         "Wystan",
-        "Wofled",
-        "Eckardus",
-        "Edelot",
-        "Leofrick",
-        "Linet",
         "Xalvador",
-        "Wymarc",
-        "Edward",
-        "Edyva",
-        "Letholdus",
-        "Loreena",
         "Zane",
-        "Ysmay",
     ],
 }
 
@@ -625,3 +586,14 @@ initiative = [
 #     "rattled",  # -1d4 WIS
 #     "disfigured",  # -1d4 CHA
 # ]
+
+
+# --- Loot Tables ---
+
+loot_tables = {
+    "loot": (
+        chargen_tables["dungeoning gear"] +
+        chargen_tables["general gear 1"] +
+        chargen_tables["general gear 2"]
+    )
+}

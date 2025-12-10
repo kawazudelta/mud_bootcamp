@@ -162,30 +162,27 @@ class CmdLook(default_cmds.CmdLook):
         Handle the looking.
         """
         caller = self.caller
-        if not self.args:
-            target = caller.location
-            if not target:
-                caller.msg("You have no location to look at!")
+        
+        # If we have args, check if the player is trying to look at something they are wearing.
+        if self.args and hasattr(caller, "equipment"):
+            # Get all equipped items
+            equip_items = [item for item, slot in caller.equipment.all() if item]
+            
+            # Search strictly within equipment
+            # quiet=True returns a list of matches, not the object itself
+            target = caller.search(self.args, candidates=equip_items, quiet=True)
+            
+            if target:
+                # We found a match (or matches) in the equipment!
+                # We handle the first match found, just like standard search.
+                # (Note: caller.search returns a list of objects when quiet=True)
+                obj = target[0] 
+                self.msg(caller.at_look(obj))
                 return
-        else:
-            # Custom search to include equipment
-            candidates = []
-            if caller.location:
-                candidates.extend(caller.location.contents)
-            candidates.extend(caller.contents)
-            
-            if hasattr(caller, "equipment"):
-                 # add all equipped items
-                 equip_items = [item for item, slot in caller.equipment.all() if item]
-                 # Use set to avoid duplicates if items are in both lists
-                 candidates = list(set(candidates + equip_items))
-            
-            target = caller.search(self.args, candidates=candidates)
-            
-        if not target:
-            return
-            
-        self.msg(caller.at_look(target))
+
+        # If we didn't find it in equipment, or had no args, let standard Look handle it.
+        # This preserves 'look here', 'look *account', and standard room/inventory looking.
+        super().func()
 
 
 class MyCmdGet(default_cmds.CmdGet):
@@ -225,13 +222,14 @@ class CmdTestLoot(default_cmds.MuxCommand):
 
     def func(self):
         if not self.args:
-            self.caller.msg("Usage: testloot <table>")
-            return
+            table_name = "loot"
+        else:
+            table_name = self.args.strip()
         
-        table_name = self.args.strip()
-
-        # Call our logic function
-        obj = loot_tables.spawn_loot(self.caller.location, table_name)
+        # Debug: check location
+        loc = self.caller.location
+        
+        obj = loot_tables.spawn_loot(loc, table_name)
 
         if obj:
             self.caller.msg(f"Spawned {obj.key} from table '{table_name}'.")
