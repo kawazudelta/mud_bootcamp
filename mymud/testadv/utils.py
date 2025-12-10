@@ -24,7 +24,7 @@ def get_obj_stats(obj, owner = None):
         str: A nice info string to display about the object.
     '''
     carried = ""
-    if owner:
+    if owner and hasattr(owner, "equipment"):
         objmap = dict(owner.equipment.all())
         carried = objmap.get(obj)
         carried = f", Worn: [{carried.value}]" if carried else ""

@@ -21,11 +21,11 @@ We already have the item definitions in `world/prototypes.py`.
 
 ---
 
-## 2. The Logic: `world/loot_tables.py`
+## 2. The Logic: `testadv/loot_tables.py`
 
 We will create a new file to handle this logic. This keeps our "Game Rules" separate from our "Data Lists."
 
-**Create File:** `world/loot_tables.py`
+**Create File:** `testadv/loot_tables.py`
 
 ```python
 import random
@@ -97,24 +97,24 @@ Add this class to the bottom of the file:
 
 ```python
 # Import the new module we just made
-from world import loot_tables
+from testadv import loot_tables
 
-class CmdLoot(default_cmds.MuxCommand):
+class CmdTestLoot(default_cmds.MuxCommand):
     """
     Spawn random loot.
     
     Usage:
-      loot <table>
+      testloot <table>
       
     Tables:
       dungeoning gear, general gear 1, general gear 2, starting weapon
     """
-    key = "loot"
+    key = "testloot"
     locks = "cmd:perm(Builder)" # Only builders should use this
 
     def func(self):
         if not self.args:
-            self.caller.msg("Usage: loot <table name>")
+            self.caller.msg("Usage: testloot <table name>")
             return
             
         table_name = self.args.strip()
@@ -129,13 +129,13 @@ class CmdLoot(default_cmds.MuxCommand):
 ```
 
 **Register the Command:**
-Don't forget to add `CmdLoot` to your `MyCmdSet` class in `commands/mycommands.py`:
+Don't forget to add `CmdTestLoot` to your `MyCmdSet` class in `commands/mycommands.py`:
 
 ```python
 class MyCmdSet(CmdSet):
     def at_cmdset_creation(self):
         # ... existing commands ...
-        self.add(CmdLoot)
+        self.add(CmdTestLoot)
 ```
 
 ---

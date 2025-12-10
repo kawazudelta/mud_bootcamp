@@ -48,6 +48,7 @@ class CharacterCmdSet(default_cmds.CharacterCmdSet):
         self.add(sittables.CmdStand2)
         self.add(mycommands.CmdEquip)
         self.add(mycommands.CmdInventory)
+        self.add(mycommands.CmdTestLoot)
 
 
 class AccountCmdSet(default_cmds.AccountCmdSet):

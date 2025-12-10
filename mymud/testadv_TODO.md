@@ -1,5 +1,10 @@
 # TestAdv TODO List
 
+## High Priority
+
+* [x] **Fix Room Item Display:** Items spawned in a room are not appearing in the room description/content list.
+* [x] **Fix `look <item>` Traceback:** Looking at specific spawned items (e.g., "mining pick") causes a traceback.
+
 ## Low Priority
 
 * [x] Improve the inventory display format (make it more readable/immersive).

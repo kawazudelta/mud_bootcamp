@@ -601,7 +601,6 @@ chargen_tables = {
     ],
 }
 
-
 reactions = [
     ("2", "Hostile"),
     ("3-5", "Unfriendly"),

@@ -1,0 +1,103 @@
+Return traceback from entering "look pick" when the mining pick was on the ground:
+
+Traceback (most recent call last):
+  File "C:\Users\sedqo\Desktop\mud_bootcamp\.venv\Lib\site-packages\evennia\commands\cmdhandler.py", line 630, in _run_command
+    ret = cmd.func()
+          ^^^^^^^^^^
+  File "C:\Users\sedqo\Desktop\mud_bootcamp\mymud\commands\mycommands.py", line 188, in func
+    self.msg(caller.at_look(target))
+             ^^^^^^^^^^^^^^^^^^^^^^
+  File "C:\Users\sedqo\Desktop\mud_bootcamp\.venv\Lib\site-packages\evennia\objects\objects.py", line 2681, in at_look
+    description = target.return_appearance(self, **kwargs)
+                  ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "C:\Users\sedqo\Desktop\mud_bootcamp\.venv\Lib\site-packages\evennia\objects\objects.py", line 1911, in return_appearance
+    desc=self.get_display_desc(looker, **kwargs),
+         ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "C:\Users\sedqo\Desktop\mud_bootcamp\mymud\testadv\objects.py", line 42, in get_display_desc
+    return get_obj_stats(self, owner=looker)
+           ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "C:\Users\sedqo\Desktop\mud_bootcamp\mymud\testadv\utils.py", line 28, in get_obj_stats
+    objmap = dict(owner.equipment.all())
+                  ^^^^^^^^^^^^^^^
+AttributeError: 'Character' object has no attribute 'equipment'
+
+An untrapped error occurred.
+(Traceback was logged 25-12-10 01:54:16-05).
+
+Error when looking at the pick while it's in my inventory:
+
+Traceback (most recent call last):
+  File "C:\Users\sedqo\Desktop\mud_bootcamp\.venv\Lib\site-packages\evennia\commands\cmdhandler.py", line 630, in _run_command
+    ret = cmd.func()
+          ^^^^^^^^^^
+  File "C:\Users\sedqo\Desktop\mud_bootcamp\mymud\commands\mycommands.py", line 188, in func
+    self.msg(caller.at_look(target))
+             ^^^^^^^^^^^^^^^^^^^^^^
+  File "C:\Users\sedqo\Desktop\mud_bootcamp\.venv\Lib\site-packages\evennia\objects\objects.py", line 2681, in at_look
+    description = target.return_appearance(self, **kwargs)
+                  ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "C:\Users\sedqo\Desktop\mud_bootcamp\.venv\Lib\site-packages\evennia\objects\objects.py", line 1911, in return_appearance
+    desc=self.get_display_desc(looker, **kwargs),
+         ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "C:\Users\sedqo\Desktop\mud_bootcamp\mymud\testadv\objects.py", line 42, in get_display_desc
+    return get_obj_stats(self, owner=looker)
+           ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "C:\Users\sedqo\Desktop\mud_bootcamp\mymud\testadv\utils.py", line 28, in get_obj_stats
+    objmap = dict(owner.equipment.all())
+                  ^^^^^^^^^^^^^^^
+AttributeError: 'Character' object has no attribute 'equipment'
+
+An untrapped error occurred.
+(Traceback was logged 25-12-10 01:54:16-05).
+
+Error looking at crowbar on ground:
+
+Traceback (most recent call last):
+  File "C:\Users\sedqo\Desktop\mud_bootcamp\.venv\Lib\site-packages\evennia\commands\cmdhandler.py", line 630, in _run_command
+    ret = cmd.func()
+          ^^^^^^^^^^
+  File "C:\Users\sedqo\Desktop\mud_bootcamp\mymud\commands\mycommands.py", line 188, in func
+    self.msg(caller.at_look(target))
+             ^^^^^^^^^^^^^^^^^^^^^^
+  File "C:\Users\sedqo\Desktop\mud_bootcamp\.venv\Lib\site-packages\evennia\objects\objects.py", line 2681, in at_look
+    description = target.return_appearance(self, **kwargs)
+                  ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "C:\Users\sedqo\Desktop\mud_bootcamp\.venv\Lib\site-packages\evennia\objects\objects.py", line 1911, in return_appearance
+    desc=self.get_display_desc(looker, **kwargs),
+         ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "C:\Users\sedqo\Desktop\mud_bootcamp\mymud\testadv\objects.py", line 42, in get_display_desc
+    return get_obj_stats(self, owner=looker)
+           ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "C:\Users\sedqo\Desktop\mud_bootcamp\mymud\testadv\utils.py", line 28, in get_obj_stats
+    objmap = dict(owner.equipment.all())
+                  ^^^^^^^^^^^^^^^
+AttributeError: 'Character' object has no attribute 'equipment'
+
+An untrapped error occurred.
+(Traceback was logged 25-12-10 02:15:48-05).
+
+Error looking at crowbar in inventory:
+
+Traceback (most recent call last):
+  File "C:\Users\sedqo\Desktop\mud_bootcamp\.venv\Lib\site-packages\evennia\commands\cmdhandler.py", line 630, in _run_command
+    ret = cmd.func()
+          ^^^^^^^^^^
+  File "C:\Users\sedqo\Desktop\mud_bootcamp\mymud\commands\mycommands.py", line 188, in func
+    self.msg(caller.at_look(target))
+             ^^^^^^^^^^^^^^^^^^^^^^
+  File "C:\Users\sedqo\Desktop\mud_bootcamp\.venv\Lib\site-packages\evennia\objects\objects.py", line 2681, in at_look
+    description = target.return_appearance(self, **kwargs)
+                  ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "C:\Users\sedqo\Desktop\mud_bootcamp\.venv\Lib\site-packages\evennia\objects\objects.py", line 1911, in return_appearance
+    desc=self.get_display_desc(looker, **kwargs),
+         ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "C:\Users\sedqo\Desktop\mud_bootcamp\mymud\testadv\objects.py", line 42, in get_display_desc
+    return get_obj_stats(self, owner=looker)
+           ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "C:\Users\sedqo\Desktop\mud_bootcamp\mymud\testadv\utils.py", line 28, in get_obj_stats
+    objmap = dict(owner.equipment.all())
+                  ^^^^^^^^^^^^^^^
+AttributeError: 'Character' object has no attribute 'equipment'
+
+An untrapped error occurred.
+(Traceback was logged 25-12-10 02:17:45-05).

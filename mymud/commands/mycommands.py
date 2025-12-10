@@ -2,6 +2,7 @@ from commands.command import Command
 from evennia import CmdSet
 from evennia import default_cmds
 from testadv.enums import WieldLocation
+from testadv import loot_tables
 
 class CmdEquip(default_cmds.MuxCommand):
     """
@@ -209,9 +210,39 @@ class CmdCharCreate(Command):
         start_chargen(self.caller, self.session)
 
 
+class CmdTestLoot(default_cmds.MuxCommand):
+    '''
+    Spawn random loot.
+
+    Usage:
+        testloot <table>
+      
+    Tables:
+        dungeoning gear, general gear 1, general gear 2, starting weapon
+    '''
+    key = "testloot"
+    locks = "cmd:perm(Builder)"
+
+    def func(self):
+        if not self.args:
+            self.caller.msg("Usage: testloot <table>")
+            return
+        
+        table_name = self.args.strip()
+
+        # Call our logic function
+        obj = loot_tables.spawn_loot(self.caller.location, table_name)
+
+        if obj:
+            self.caller.msg(f"Spawned {obj.key} from table '{table_name}'.")
+        else:
+            self.caller.msg(f"Could not spawn loot from table '{table_name}'.")
+
+
 class MyCmdSet(CmdSet):
 
     def at_cmdset_creation(self):
         self.add(CmdEcho)
         self.add(CmdHit)
         self.add(CmdCharCreate)
+        self.add(CmdTestLoot)

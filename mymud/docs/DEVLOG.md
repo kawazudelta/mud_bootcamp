@@ -1,5 +1,14 @@
 # Development Log
 
+## 2025-12-10
+
+### Changes
+- **Bug Fixes:**
+    - **Room Item Display:** Resolved an issue where spawned items were not visible in the room description.
+    - **Look Command Crash:** Fixed a traceback when looking at items (e.g., "mining pick", "crowbar"). The issue was caused by the item's description method (`get_obj_stats`) assuming the looker always had an `equipment` handler. Added a safety check to `testadv/utils.py` to prevent crashes when viewed by non-standard characters (like the superuser).
+    - **Loot Spawning Location:** Fixed an issue where `testloot` spawned items in "Null space" (Location: None) instead of the caller's room. Refactored `testadv/loot_tables.py` to pass a dictionary with `{"prototype_parent": key, "location": loc}` to `spawn()`, which resolved the location assignment failure.
+    - **Testloot Persistence:** Added `CmdTestLoot` to `CharacterCmdSet` in `commands/default_cmdsets.py` so the command persists across server reloads.
+
 ## 2025-12-09
 
 ### Changes
