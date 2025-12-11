@@ -25,6 +25,13 @@
     - **Commands:** 
         - Implemented `CmdOpen`, `CmdClose`, and `CmdPut` in `commands/mycommands.py`.
         - Refactored `CmdGet` to inherit from `evennia.contrib.game_systems.containers.containers.CmdContainerGet`. This leverages robust, community-standard parsing for `get <obj> from <container>` while maintaining compatibility with our custom equipment handling.
+- **Documentation:**
+    - **Batch Build Guide (v5 WIP):** Updated `batch/batch_build_guide_v5_wip.md` to include implementation guides for:
+        - **Containers:** Chests/Crates using `testadv.objects.TestAdvContainer`.
+        - **Sittables:** Chairs/Benches using `typeclasses.sittables.Sittable`.
+        - **Consumables:** Potions/Food using `testadv.objects.TestAdvConsumable`.
+        - **Echoing Rooms:** Atmospheric rooms using `testadv.rooms.EchoingRoom`.
+        - **Random Loot:** Added reference for loot spawning.
 
 ## 2025-12-09
 
