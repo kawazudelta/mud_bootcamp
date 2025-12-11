@@ -1,6 +1,7 @@
 from commands.command import Command
 from evennia import CmdSet
 from evennia import default_cmds
+from evennia.contrib.game_systems.containers.containers import CmdContainerGet
 from testadv.enums import WieldLocation
 from testadv import loot_tables
 
@@ -335,6 +336,128 @@ class CmdRemove(default_cmds.MuxCommand):
             caller.msg("Could not remove the item.")
 
 
+class CmdOpen(default_cmds.MuxCommand):
+    '''
+    Open a container.
+
+    Usage:
+        open <obj>
+    '''
+    key = "open"
+
+    def func(self):
+        obj = self.caller.search(self.args)
+        if not obj:
+            return
+        if not hasattr(obj, "is_open"):
+            self.caller.msg("You can't open that.")
+            return
+        if obj.db.is_open:
+            self.caller.msg(f"{obj.key} is already open.")
+            return
+        
+        obj.db.is_open = True
+        self.caller.msg(f"You open {obj.key}.")
+        # Optional: Echo to room
+        # Let's leave this off for now
+        # self.caller.location.msg_contents(f"{self.caller.key} opens {obj.key}.", exclude=self.caller)
+
+
+class CmdClose(default_cmds.MuxCommand):
+    '''
+    Close a container.
+    
+    Usage:
+        close <obj>
+    '''
+    key = "close"
+
+    def func(self):
+        obj = self.caller.search(self.args)
+        if not obj:
+            return
+        if not hasattr(obj, "is_open"):
+            self.caller.msg("You can't close that.")
+            return
+        if not obj.db.is_open:
+            self.caller.msg(f"{obj.key} is already closed.")
+            return
+        
+        obj.db.is_open = False
+        self.caller.msg(f"You close {obj.key}.")
+
+
+class CmdGet(CmdContainerGet):
+    """
+    pick up something
+
+    Usage:
+      get <obj>
+      get <obj> from <container>
+
+    Picks up an object from your location or a container and puts it in
+    your inventory.
+    """
+    key = "get"
+    aliases = ["grab", "take"]
+
+class CmdPut(default_cmds.MuxCommand):
+    '''
+    Put an item into a container.
+
+    Usage:
+        put <item> in <container>
+    '''
+    key = "put"
+
+    def func(self):
+        if not self.args or " in " not in self.args:
+            self.caller.msg("Usage: put <item> in <container>")
+            return
+        
+        obj_name, container_name = self.args.split(" in ", 1)
+
+        # Search for both
+        container = self.caller.search(container_name)
+        if not container:
+            return
+        
+        obj = self.caller.search(obj_name)
+        if not obj:
+            return
+        
+        #1. Check if container is actually has capacity to hold items
+        if not hasattr(container, "capacity"):
+            self.caller.msg(f"{container.key} cannot hold items.")
+            return
+
+        #2 Check if container is open using the lock we set on the typeclass
+        if not container.access(self.caller, "put"):
+            self.caller.msg(f"{container.key} is closed.")
+            return
+
+        #3 Check contents and calculate available capacity
+        current_size = sum(o.size for o in container.contents if hasattr(o, 'size'))
+        if current_size + obj.size > container.capacity:
+            self.caller.msg(f"{container.key} is too full.")
+            return
+
+        #4 Move logic
+        # If we were wearing/wielding it, we need to remove it from EquipmentHandler
+        # Standard .move_to() handles location
+        # EquipmentHandler needs 'remove' call if equipped.
+        
+        # Check if equipped
+        if hasattr(self.caller, "equipment") and obj in self.caller.equipment.all_objects():
+            self.caller.equipment.remove(obj)
+             
+        # Perform move
+        if obj.move_to(container, quiet=True):
+            self.caller.msg(f"You put {obj.key} in {container.key}.")
+        else:
+            self.caller.msg("You can't put that there.")
+
+
 class MyCmdSet(CmdSet):
 
     def at_cmdset_creation(self):
@@ -344,3 +467,7 @@ class MyCmdSet(CmdSet):
         self.add(CmdTestLoot)
         self.add(CmdWield)
         self.add(CmdRemove)
+        self.add(CmdOpen)
+        self.add(CmdClose)
+        self.add(CmdPut)
+        self.add(CmdGet)

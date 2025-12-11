@@ -16,6 +16,16 @@
     - **Loot Tables:** Created a master `loot` table in `testadv/random_tables.py` aggregating all gear types.
     - **Flexibility:** Updated `CmdTestLoot` to default to the `loot` table if no argument is provided, simplifying testing.
 
+- **Container System:**
+    - **Feature Implementation:** Implemented functional containers (chests/crates) based on `TestAdvContainer`.
+    - **Core Logic:** 
+        - Created `TestAdvContainer` in `testadv/objects.py` with `is_open` state and `capacity` attributes.
+        - Configured `lockfuncs.py` with `is_open()` helper to enforce lock access.
+        - Overrode `return_appearance` to rigorously hide container contents when closed.
+    - **Commands:** 
+        - Implemented `CmdOpen`, `CmdClose`, and `CmdPut` in `commands/mycommands.py`.
+        - Refactored `CmdGet` to inherit from `evennia.contrib.game_systems.containers.containers.CmdContainerGet`. This leverages robust, community-standard parsing for `get <obj> from <container>` while maintaining compatibility with our custom equipment handling.
+
 ## 2025-12-09
 
 ### Changes

@@ -272,3 +272,56 @@ def get_bare_hands():
     if not _BARE_HANDS:
         _BARE_HANDS = create_object(WeaponBareHands, key="Bare Hands")
     return _BARE_HANDS
+
+
+class TestAdvContainer(TestAdvObject):
+    '''
+    An object that holds other objects
+    but like, in a cool way
+    '''
+    obj_type = ObjType.CONTAINER
+
+    # Capacity in Knave definted inventory slots
+    capacity = AttributeProperty(10, autocreate=False)
+
+    # state
+    is_open = AttributeProperty(False, autocreate=False)
+
+    def at_object_creation(self):
+        super().at_object_creation()
+        # by default containers are closed
+        self.db.is_open = False
+        # Locks:
+        # get_from: Who can take things out? Only if open.
+        # put: who can put things in? Only if open.
+        self.locks.add("get_from:is_open();put:is_open()")
+
+    def return_appearance(self, looker, **kwargs):
+        """
+        This is called when someone looks at the object. 
+        We override it to ensure we strictly control the output.
+        """
+        if not looker:
+            return ""
+            
+        # Get the base description (which includes stats from TestAdvObject)
+        # Note: TestAdvObject.get_display_desc calls get_obj_stats
+        desc = self.get_display_desc(looker, **kwargs)
+        
+        # Add container-specific info
+        if not self.db.is_open:
+            desc += "\n\nIt is closed."
+        else:
+            desc += "\n\n|wContents:|n"
+            contents = self.contents
+            if not contents:
+                desc += "\n  (empty)"
+            else:
+                for obj in contents:
+                    desc += f"\n  {obj.key}"
+                    
+        return desc
+
+    # Helper for lock checking
+    def check_open(self, accessing_obj, **kwargs):
+        return self.db.is_open

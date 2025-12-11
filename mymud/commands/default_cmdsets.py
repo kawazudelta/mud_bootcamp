@@ -40,7 +40,7 @@ class CharacterCmdSet(default_cmds.CharacterCmdSet):
         #
         self.add(mycommands.CmdEcho)
         self.add(mycommands.CmdHit)
-        self.add(mycommands.MyCmdGet)
+        #self.add(mycommands.MyCmdGet)
         self.add(mycommands.CmdLook)
         self.add(CmdQuickFind())
         #self.add(sittables.CmdNoSitStand)
@@ -51,6 +51,11 @@ class CharacterCmdSet(default_cmds.CharacterCmdSet):
         self.add(mycommands.CmdTestLoot)
         self.add(mycommands.CmdWield)
         self.add(mycommands.CmdRemove)
+        self.add(mycommands.CmdOpen)
+        self.add(mycommands.CmdClose)
+        self.add(mycommands.CmdPut)
+        self.add(mycommands.CmdGet)
+
 
 
 class AccountCmdSet(default_cmds.AccountCmdSet):

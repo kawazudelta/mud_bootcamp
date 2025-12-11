@@ -10,3 +10,5 @@
 
 * [x] Improve the inventory display format (make it more readable/immersive).
 * [x] Make worn/wielded items 'look'able (allow default look item display to access equipment handler)
+* [ ] Expand `CmdOpen` to work for doors.
+* [ ] Refactor `get_obj_stats` to handle empty descriptions gracefully and conditionally hide irrelevant stats (like combat stats for containers).

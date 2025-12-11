@@ -34,3 +34,12 @@ def sitonthis(accessing_obj, accessed_obj, *args, **kwargs):
     True if accessing_obj is sitting on/in the accessed_obj.
     '''
     return accessed_obj.obj.db.sitter == accessing_obj
+
+def is_open(accessing_obj, accessed_obj, *args, **kwargs):
+    '''
+    Returns true if accessed_obj is open.
+    Required for containers and container-related commands.
+    '''
+    if hasattr(accessed_obj, "db") and accessed_obj.db.is_open:
+        return True
+    return False
